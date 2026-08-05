@@ -90,4 +90,4 @@ docs/       专项手册(按需)  ·  VERSIONS.md 版本维度  ·  分层导航
 
 ## 许可
 
-见 `LICENSE`。当前私有、未发布;开源前请替换为正式许可(如 MIT / Apache-2.0)。
+MIT License,见 `LICENSE`。(暂定 MIT,可日后调整。)
