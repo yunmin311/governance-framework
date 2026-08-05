@@ -1,0 +1,23 @@
+schema_version: "1.0"
+task_id: ""
+project_id: ""
+sender: ""
+receiver: ""
+task_type: ""
+priority: ""
+status: "DRAFT"
+objective: ""
+background: ""
+required_reading: []
+source_of_truth: []
+frozen_constraints: []
+allowed_exploration: []
+forbidden_changes: []
+expected_output: []
+expected_result_status: "CANDIDATE"
+validation_method: []
+approval_owner: ""
+deadline: ""
+report_back_to: ""
+write_authorization: "NONE"
+

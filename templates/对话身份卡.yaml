@@ -1,0 +1,42 @@
+schema_version: "1.0"
+dialogue_id: ""
+dialogue_name: ""
+platform: ""
+project_id: ""
+level: "L4"
+status: "UNKNOWN"
+created_at: ""
+last_active_at: ""
+accessibility: "UNKNOWN"
+purpose: ""
+primary_responsibility: "UNKNOWN"
+secondary_responsibilities: []
+out_of_scope: []
+upstream_dialogue: ""
+downstream_dialogues: []
+reports_to: ""
+can_delegate_to: []
+required_reading: []
+allowed_write_targets: []
+forbidden_write_targets: []
+input_format: ""
+output_format: ""
+completion_definition: ""
+authority:
+  can_explore: false
+  can_execute: false
+  can_approve: false
+  can_freeze: false
+  can_modify_charter: false
+  can_create_skill_candidate: false
+  can_delete: false
+current_prompt_location: ""
+current_charter_location: ""
+knowledge_sources: []
+known_conflicts: []
+evidence: []
+retention_decision: "UNKNOWN"
+migration_status: "NOT_STARTED"
+successor_dialogue: ""
+notes: ""
+

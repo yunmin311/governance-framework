@@ -1,0 +1,25 @@
+schema_version: "1.0"
+skill_id: ""
+skill_name: ""
+level: "S2"
+status: "CANDIDATE"
+purpose: ""
+use_when: []
+do_not_use_when: []
+inputs: []
+required_reading: []
+workflow: []
+output_contract: ""
+quality_checks: []
+failure_handling: []
+depends_on: []
+conflicts_with: []
+source_dialogues: []
+source_documents: []
+validation_records: []
+maintainer: ""
+version: ""
+canonical_path: ""
+context_cost: ""
+retention_decision: ""
+

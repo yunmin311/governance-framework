@@ -1,0 +1,111 @@
+schema_version: 1
+artifact: rule-traceability
+version: v2.2.1
+status: CANDIDATE
+purpose: >
+  每条 runtime 承重规则的唯一来源与去向。同一条活动规则只有一个正式表达（在
+  runtime/01-core-rules.md 内以 Rule ID 出现）；其它位置只能引用 Rule ID、作背景或进归档。
+note: 本轮为“抽取引用”，不改变已批准治理含义；semantic_change 全部为 none。
+
+rules:
+  - rule_id: GOV-001
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§1.1 用户是唯一最高决策人"
+    new_location: runtime/01-core-rules.md#GOV-001
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-002
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§1.2 总管治理权非无限执行权"
+    new_location: runtime/01-core-rules.md#GOV-002
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-003
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§1.3 文档高于对话记忆"
+    new_location: runtime/01-core-rules.md#GOV-003
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-004
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§1.4 一事一正本"
+    new_location: runtime/01-core-rules.md#GOV-004
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-005
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§1.5 先证明来源 / §4 证据等级"
+    new_location: runtime/01-core-rules.md#GOV-005
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-006
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§1.6 探索与决定分离 / §5 决策门 DACI"
+    new_location: runtime/01-core-rules.md#GOV-006
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-007
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§1.7 没进正式记录不算完成 / §12 汇报门禁"
+    new_location: runtime/01-core-rules.md#GOV-007
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-008
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§3 四维状态"
+    new_location: runtime/01-core-rules.md#GOV-008
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-009
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§4 权威顺序与证据等级"
+    new_location: runtime/01-core-rules.md#GOV-009
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-010
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§7 所有权与共享写入面（Git 最低规则）"
+    new_location: runtime/01-core-rules.md#GOV-010
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    downstream: "各项目 adapter project_gates（ordinary_commit_owner / push_owner / approver）"
+    status: ACTIVE
+
+  - rule_id: GOV-011
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§6 标准任务（高风险动作）/ §13 保留迁移归档删除"
+    new_location: runtime/01-core-rules.md#GOV-011
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    status: ACTIVE
+
+  - rule_id: GOV-012
+    original_source: core/01-governance-charter-v2.md
+    original_section: "§14 平台上下文与硬权限"
+    new_location: runtime/01-core-rules.md#GOV-012
+    action: EXTRACT-REFERENCE
+    semantic_change: none
+    downstream: "adapters/codex/README.md, adapters/claude/README.md, skills/.../references/hard-permissions.md"
+    status: ACTIVE
+
+one_expression_rule: >
+  以上每个 rule_id 的正式表达唯一存在于 runtime/01-core-rules.md。core/01 宪章是审计正本
+  （保留完整条文），docs/ 手册是背景说明，adapter 是平台落地，均以 Rule ID 引用，不形成第二份可独立演化的规则。

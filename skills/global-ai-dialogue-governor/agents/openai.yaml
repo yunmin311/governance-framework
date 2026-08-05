@@ -1,0 +1,4 @@
+interface:
+  display_name: "个人 AI 分层总管"
+  short_description: "治理多项目、多对话、机器迁移、设计基线、文件交付与事故恢复"
+  default_prompt: "Use $global-ai-dialogue-governor to load my layered governance context, protect project canonical sources, and choose the safe operating mode."

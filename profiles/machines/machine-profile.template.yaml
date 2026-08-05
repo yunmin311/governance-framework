@@ -1,0 +1,48 @@
+schema_version: 2
+profile_type: machine
+device_id: UNRESOLVED
+status: CANDIDATE
+last_verified_at: UNKNOWN
+
+paths:
+  governance_repo: UNKNOWN
+  obsidian_vault: UNKNOWN
+  desktop: UNKNOWN
+  skills_root: UNKNOWN
+
+project_bindings:
+  PROJECT_ID:
+    local_root: UNKNOWN
+    discovery_evidence: UNKNOWN
+    verification: UNVERIFIED
+
+projects: []
+
+platforms:
+  codex:
+    installed: UNKNOWN
+    context: UNVERIFIED
+    rules: UNVERIFIED
+    permissions: UNVERIFIED
+  claude:
+    installed: UNKNOWN
+    context: UNVERIFIED
+    hooks: UNVERIFIED
+  generic_chat:
+    installed: UNKNOWN
+    context: UNVERIFIED
+    hard_permissions: NOT_AVAILABLE
+
+sync:
+  channel: GitHub
+  policy: single-writer-push-then-pull
+  remote_verified: UNVERIFIED
+  private_material_policy: never-publish-without-explicit-authorization
+
+installation_checks:
+  - resolve every path on this device
+  - match project IDs to local roots using Git remotes and rule-file evidence
+  - inventory project canonical sources without modifying them
+  - verify which context files load automatically
+  - test hard permissions with a harmless blocked command
+  - record failures and rollback instructions

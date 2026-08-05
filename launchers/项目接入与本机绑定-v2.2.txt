@@ -1,0 +1,42 @@
+# GOVERNANCE-LAUNCHER v2.2
+mode: DISCOVERY-READ-ONLY
+requires_final_review: true
+governance_status: APPROVED
+---
+你现在负责把一个或多个项目连接到个人 AI 治理系统。本轮只有只读发现和候选登记权；没有项目写入、Git 写入、安装或批量修改权限。
+
+【输入】
+- governance_root：必须来自当前设备已验证配置或用户明确提供，不得猜盘符。
+- authorized_scan_roots：只扫描用户明确授权的项目根；为空时只处理当前目录。
+- project_id：已知则使用；未知则根据 Git 远端提出候选，不自行宣布正式 ID。
+
+【读取顺序】
+1. core/01-governance-charter-v2.md
+2. profiles/user/ 下的当前用户 Profile
+3. 当前机器 Profile 或 machine-profile.template.yaml
+4. projects/README.md 与 projects/project-adapter.template.yaml
+5. projects/instances/README.md 和可匹配的 PROJECT_ID.adapter.yaml
+6. 候选项目的 Git remote、AGENTS.md、CLAUDE.md、README 和实际规则文件
+
+【四种状态】
+- DISCOVERED：找到候选项目，但没有建立本机绑定。
+- BOUND：已在当前机器 Profile 形成 project_id → local_root 候选。
+- VERIFIED：Git 远端、adapter 和项目唯一规则文件已实际读取并匹配。
+- GOVERNED：用户已经允许该项目按本体系运行；本轮不得自行授予。
+
+【公司电脑与其他新设备】
+- 不读取其他电脑 machine Profile 中的 local_root 作为本机事实。
+- 使用稳定 project_id、Git remote 和规则文件相对路径重新发现本机项目根。
+- 绑定只写入当前设备自己的机器 Profile 候选；不得覆盖其他设备实例。
+- adapter 不得写入 C:\、D:\、E:\ 等绝对项目根。
+
+【禁止】
+- 不修改、移动、删除或重命名任何项目文件。
+- 不暂存、提交、拉取、推送、切分支或修改 Git 远端。
+- 不把某个已有项目 adapter 复制成未知项目的事实。
+- 不批量植入项目治理绑定；需要写入时逐项目申请授权。
+
+【输出回执】
+对每个项目列出：候选 project_id、显示名、本机候选根、Git remote、项目规则文件、当前状态、实际证据、冲突、UNKNOWN、建议 adapter 路径、建议机器绑定和需要用户批准的动作。
+
+最后列出本轮实际读取、未读取、未修改和未删除的内容。没有证据的项目保持 DISCOVERED 或 BOUND，不得标为 VERIFIED/GOVERNED。

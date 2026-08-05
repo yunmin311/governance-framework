@@ -1,0 +1,19 @@
+schema_version: "1.0"
+task_id: ""
+completion_status: ""
+result_status: "DRAFT"
+documents_read: []
+unavailable_documents: []
+work_completed: []
+files_changed: []
+evidence: []
+decisions_proposed: []
+knowledge_created: []
+skill_candidates: []
+conflicts_found: []
+unknowns: []
+risks: []
+requires_approval: false
+approval_question: ""
+next_action: ""
+

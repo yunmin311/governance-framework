@@ -1,0 +1,41 @@
+schema_version: 2
+adapter_type: project
+project_id: PROJECT_ID
+display_name: PROJECT_DISPLAY_NAME
+status: CANDIDATE
+last_verified_at: UNKNOWN
+constitution_copy: false
+
+canonical_source:
+  repository: OWNER/REPOSITORY
+  remote: 'https://HOST/OWNER/REPOSITORY.git'
+  default_branch: DEFAULT_BRANCH
+  path: PROJECT_RULE_FILE
+  commit: UNKNOWN
+  blob: UNKNOWN
+  verification: UNVERIFIED
+
+platform_entries:
+  claude:
+    entry: PROJECT_RULE_FILE
+    behavior: Read the entire project rule file before dependent work.
+  codex:
+    entry: AGENTS.md
+    behavior: Resolve project_id, then read the project canonical rule file.
+    caveat: A pointer does not prove transitive loading; verify the active harness.
+  generic_chat:
+    entry: MANUAL
+    behavior: Receive the verified project rule file and minimum task context.
+
+roles: []
+shared_write_surfaces: []
+project_gates: {}
+portable_distillation: []
+project_specific_exclusions: []
+
+loading_contract:
+  - resolve local_root from the current machine profile project_bindings
+  - compare the local Git remote and project rule path with canonical_source
+  - read the project canonical rule file before dependent writes
+  - declare the active role and exact ownership boundaries
+  - keep inaccessible or changed sources DISCOVERY-READ-ONLY

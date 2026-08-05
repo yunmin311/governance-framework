@@ -1,0 +1,29 @@
+schema_version: "1.0"
+project_id: ""
+project_name: ""
+status: "UNKNOWN"
+priority: ""
+device_id: ""
+path_alias: ""
+resolved_path: ""
+path_verified_at: ""
+platforms: []
+canonical_charter:
+  type: ""
+  path: ""
+  version: ""
+  verified_at: ""
+current_state_source: ""
+current_spec_source: ""
+design_baseline_source: ""
+report_source: ""
+project_managers: []
+dialogues: []
+skills: []
+knowledge_bases: []
+frozen_items: []
+known_conflicts: []
+unknowns: []
+evidence: []
+next_audit_action: ""
+

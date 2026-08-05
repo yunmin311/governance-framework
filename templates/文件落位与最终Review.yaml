@@ -1,0 +1,75 @@
+record_type: file-placement-and-final-review
+phase: PREFLIGHT | FINAL-REVIEW
+
+identity:
+  project_id:
+  dialogue_id:
+  task_id:
+  role:
+  device_id:
+  generated_at:
+
+project_context:
+  resolved_project_root:
+  existing_structure_read: []
+  project_rules_read: []
+  inaccessible_scope: []
+  existing_canonical_sources: []
+
+placement_plan:
+  candidates:
+    - strategy: NATIVE | DIALOGUE-WORKSPACE | CENTRAL-DELIVERY | EXTERNAL-PLATFORM
+      output_root:
+      advantages: []
+      risks: []
+      impact_on_existing_structure:
+  recommended_strategy:
+  recommendation_reason:
+  user_approval_required: false
+  approval_reason:
+
+file_scope:
+  output_root:
+  read_scope: []
+  create_scope: []
+  modify_scope: []
+  forbidden_scope: []
+  canonical_outputs: []
+  temporary_outputs: []
+  naming_policy:
+  path_compatibility_checked: false
+  path_compatibility_evidence:
+  review_path:
+  review_owner:
+  rollback_point:
+
+planned_actions:
+  create: []
+  modify: []
+  move: []
+  explicitly_not_delete: []
+  external_links: []
+
+final_review:
+  completion_status: WORKING | REVIEW | CANDIDATE | UNVERIFIED | APPROVED | FROZEN | QUARANTINED
+  actually_read: []
+  created: []
+  modified: []
+  moved: []
+  deleted_current_task_temporary_only: []
+  delete_candidates: []
+  deliverables:
+    - path_or_url:
+      purpose:
+      status:
+      version:
+      canonical: false
+      open_method:
+      verification:
+  external_link_registry: []
+  tests_and_reviews: []
+  unverified_items: []
+  known_limitations: []
+  decisions_needed: []
+  rollback_method:
+  next_safe_action:

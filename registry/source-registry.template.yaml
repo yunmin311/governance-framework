@@ -1,0 +1,15 @@
+schema_version: 2
+registry_type: source-evidence
+status: CANDIDATE
+portable: true
+
+sources:
+  - id: SOURCE_ID
+    scope: governance | user-profile | machine | project | design | knowledge
+    canonical_path: SOURCE_PATH_OR_URL
+    version: UNKNOWN
+    sha256: UNKNOWN
+    verification: UNVERIFIED
+    last_read_at: UNKNOWN
+    conflicts: []
+    notes: ''

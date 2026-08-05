@@ -1,0 +1,68 @@
+receipt_type: html-output-quality-review
+task_id:
+project_id:
+dialogue_id:
+role: design | main | advisor | notes | other
+result_status: EXPLORE | CANDIDATE | UNVERIFIED | APPROVED | FROZEN
+correction_level: NONE | CORRECT-IN-PLACE | BASELINE-RESET | INCIDENT-READ-ONLY
+
+sources:
+  project_charter:
+  design_baseline:
+  baseline_version:
+  current_spec:
+  actually_read: []
+  inaccessible: []
+
+scope:
+  target_pages: []
+  target_sections: []
+  target_states: []
+  responsive_widths: []
+  frozen_areas: []
+  allowed_changes: []
+
+design_system:
+  tokens_source:
+  shared_components: []
+  inherited_rules: []
+  adapted_rules: []
+  explorations: []
+  exceptions: []
+
+coverage:
+  - page_or_section:
+    purpose:
+    content_complete: false
+    visual_consistent: false
+    responsive_checked: false
+    actual_render_checked: false
+    evidence:
+    findings: []
+    action: KEEP | REPAIR | REBUILD | UNKNOWN
+
+render_review:
+  method:
+  opened_or_rendered_files: []
+  widths_checked: []
+  first_screen_checked: false
+  middle_checked: false
+  tail_checked: false
+  font_and_assets_checked: false
+  links_and_interactions_checked: false
+  unverified_items: []
+
+files:
+  canonical_output:
+  created: []
+  modified: []
+  comparison_artifacts: []
+  rollback_point:
+
+decision:
+  passed_gates: []
+  failed_gates: []
+  remaining_unknowns: []
+  approval_owner:
+  recommended_next_status:
+  next_safe_action:

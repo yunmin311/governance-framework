@@ -1,0 +1,152 @@
+schema_version: 1
+layer: runtime-router
+version: v2.2.1
+status: CANDIDATE
+purpose: 普通任务的最小加载路由。入口先读 runtime/00-entry.md，分类后只加载对应模式的 default_files。
+
+default_governance_files_max: 5
+default_governance_characters_max: 8000
+
+# QUICK/NORMAL 默认绝不加载这些（存在≠要读）
+forbidden_default_paths_global:
+  - archive/
+  - docs/
+  - reviews/
+  - published/
+  - releases/
+  - templates/
+  - "*.pdf"
+  - "*.docx"
+  - "*.zip"
+
+modes:
+
+  QUICK:
+    triggers:
+      - 改一个已知 Markdown 或文本文件
+      - 小修文案、格式、措辞
+      - 单点问答，可回滚且地盘清楚
+    default_files:
+      - runtime/00-entry.md
+      - runtime/01-core-rules.md
+      - runtime/02-user-runtime-profile.md
+    optional_files: []
+    forbidden_default_paths:
+      - core/01-governance-charter-v2.md   # 完整宪章正文
+      - profiles/user/user-profile.template.md # 完整用户 Profile
+      - profiles/machines/
+      - skills/global-ai-dialogue-governor/references/
+      - templates/
+      - archive/
+      - docs/
+      - reviews/
+      - published/
+      - releases/
+    max_governance_files: 3
+    required_output:
+      - Changed
+      - Verified
+      - Remaining
+    git_behavior: 只改文件，不默认 commit/push；提交须为登记的 ordinary_commit_owner 且用户本轮授权
+    escalation_conditions:
+      - 跨项目影响
+      - 改结构或数据结构
+      - 动 Git 历史或硬权限
+      - 公开发布 / 真实花钱
+      - 来源冲突 / 需要用户不可逆决定
+
+  NORMAL:
+    triggers:
+      - 某个已治理项目内的常规代码或内容任务
+    default_files:
+      - runtime/00-entry.md
+      - runtime/01-core-rules.md
+      - runtime/02-user-runtime-profile.md
+      - projects/instances/<project_id>.adapter.yaml
+    default_context:
+      - 由 adapter 指向的项目唯一正本 + 当前 Spec / 直接相关测试规范（在项目仓库内读）
+    optional_files:
+      - profiles/machines/<device_id>.yaml   # 仅用于解析本机项目根路径
+    forbidden_default_paths:
+      - core/01-governance-charter-v2.md   # 完整宪章正文
+      - profiles/user/user-profile.template.md # 完整用户 Profile
+      - skills/global-ai-dialogue-governor/references/
+      - templates/
+      - archive/
+      - docs/
+      - reviews/
+      - published/
+      - releases/
+    max_governance_files: 5
+    required_output:
+      - Changed
+      - Verified
+      - Remaining
+    git_behavior: 按项目 adapter 的 ordinary_commit_owner / push_owner；只暂存显式路径；子代理与无权角色不碰 Git
+    escalation_conditions:
+      - 需要机器发现资料或跨项目影响 → STRUCTURAL
+      - 改数据结构 / 公开发布
+      - 出现正本冲突或越权 → INCIDENT
+
+  STRUCTURAL:
+    triggers:
+      - 新电脑首次接入 / 换机重绑路径
+      - 跨项目结构调整
+      - 宪章级改动
+    default_files:
+      - runtime/00-entry.md
+      - core/01-governance-charter-v2.md
+      - profiles/user/user-profile.template.md
+      - skills/global-ai-dialogue-governor/references/layered-loading.md
+    default_context:
+      - 当前机器 profiles/machines/<device_id>.yaml 或机器模板（首次接入用模板 + 只读发现）
+    optional_files:
+      - projects/instances/
+      - registry/
+      - adapters/
+    forbidden_default_paths:
+      - published/
+      - releases/
+      - "*.pdf"
+      - "*.docx"
+      - "*.zip"
+    max_governance_files: 12
+    required_output:
+      - 完整开工声明卡
+      - 分层加载证据（实际读到的层与版本）
+      - 最终 Review
+    git_behavior: 结构改动走门禁；首次接入先 DISCOVERY-READ-ONLY，用户批准盘点后才写
+    escalation_conditions:
+      - 发现正本冲突 / 越权 / 私密风险 → INCIDENT
+
+  INCIDENT:
+    triggers:
+      - 正本冲突 / 越权写入
+      - 私密材料外泄风险
+      - 多对话现状互斥
+    default_files:
+      - runtime/00-entry.md
+      - core/01-governance-charter-v2.md
+      - launchers/事故恢复-只读-v2.txt
+    default_context:
+      - 仅受影响的 adapter / 项目正本 + 证据日志
+    optional_files: []
+    forbidden_default_paths:
+      - 无关项目
+      - published/
+      - releases/
+    max_governance_files: 8
+    required_output:
+      - 已确认事实
+      - 证据来源
+      - 未知项
+      - 影响范围
+      - 被隔离文件
+      - 最后可信点
+      - 最小恢复链
+      - 需用户批准项
+    git_behavior: 只读取证；停止一切写 / 删 / 移 / 合并 / 批准 / 冻结
+    escalation_conditions:
+      - 退出事故模式必须由用户明确批准
+
+# 外部候选能力（如 external-ponytail-review）一律 runtime_loading: DISABLED，不进任何模式的 default_files。
