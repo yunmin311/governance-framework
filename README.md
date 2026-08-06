@@ -59,31 +59,33 @@ The full charter, your complete profile, every handbook — they all exist, but 
 
 Unsure between two modes? Drop to the one with the smaller write surface. The moment something is irreversible, over-reaching, or touches private material, it goes straight to **INCIDENT**.
 
-## Quickstart — 2 minutes
+## Get started
+
+**1 · Install it into your AI.** Clone, then drop the two skills into your agent's skills folder so any conversation can pick them up:
 
 ```bash
 git clone https://github.com/yunmin311/governance-framework.git
+cp -r governance-framework/skills/* ~/.claude/skills/      # Claude Code
+```
+
+Using Codex or another agent? Copy into that agent's skills directory instead — or don't install at all and just paste `launchers/总管AI-日常启动-v2.txt` into the chat.
+
+**2 · Make it yours — the step that matters.** On disk it is still generic; adapt it so it governs *your* work:
+
+- copy `profiles/user/user-profile.template.md` → fill in your role, **your language**, how you want reports, and what only you may decide;
+- use `profiles/machines/machine-profile.template.yaml` + `projects/project-adapter.template.yaml` to record where your projects live and who may commit;
+- keep these filled-in files in **your own private repo** — never push them back here.
+
+This is what turns "a framework on disk" into "governs *my* work, across *my* machines and models."
+
+**3 · Verify.**
+
+```bash
 cd governance-framework
-python -X utf8 tools/validate_runtime.py    # prove it's real and tested
+python -X utf8 tools/validate_runtime.py       # --- 11 passed, 0 failed ---
 ```
 
-Real output:
-
-```text
-=== validate_runtime.py ===
-  PASS runtime/00-entry.md = 821 chars (<= 1200)
-  PASS runtime/01-core-rules.md = 2198 chars (<= 3500)
-  PASS runtime/02-user-runtime-profile.md = 784 chars (<= 2000)
-  PASS runtime total = 3803 chars (<= 8000)
-  ...
---- 11 passed, 0 failed ---
-```
-
-Then paste the daily launcher into any AI — Claude, Codex, anything — and hand it one concrete task:
-
-```text
-copy launchers/总管AI-日常启动-v2.txt in full  →  paste to your AI  →  give it a task
-```
+**4 · Use it.** Hand your AI any task. It classifies the task, loads only what it needs, acts within the rules, and reports back in three lines — like this:
 
 ## Watch it work
 

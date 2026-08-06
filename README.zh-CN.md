@@ -59,31 +59,33 @@
 
 两档拿不准?取写入面更小的那一档。一旦涉及不可逆、越权或私密材料,直接进 **INCIDENT**。
 
-## 快速开始 —— 2 分钟
+## 快速开始 —— 四步上手
+
+**1 · 装进你的 AI。** clone 下来,把两个 skill 放进你 agent 的 skills 文件夹,任何对话就能调用它:
 
 ```bash
 git clone https://github.com/yunmin311/governance-framework.git
+cp -r governance-framework/skills/* ~/.claude/skills/      # Claude Code
+```
+
+用 Codex 或别的 agent?拷进那个 agent 的 skills 目录即可 —— 或者干脆不装,直接把 `launchers/总管AI-日常启动-v2.txt` 整段贴进对话。
+
+**2 · 适配成你自己的 —— 最关键的一步。** 刚下下来它还是通用的,得适配成*你的*,它才治理*你的*活:
+
+- 复制 `profiles/user/user-profile.template.md` → 填你的角色、**你用什么语言**、报告怎么给你、哪些只有你能定;
+- 用 `profiles/machines/machine-profile.template.yaml` + `projects/project-adapter.template.yaml` 记下你的项目在哪、谁能提交;
+- 这些填好的文件放进**你自己的私有仓** —— 别推回本框架。
+
+这一步,才把“硬盘上一个框架”变成“治理*我的*活、跨*我的*机器和模型”。
+
+**3 · 自检。**
+
+```bash
 cd governance-framework
-python -X utf8 tools/validate_runtime.py    # 先证明它是真的、测过的
+python -X utf8 tools/validate_runtime.py       # --- 11 passed, 0 failed ---
 ```
 
-真实输出:
-
-```text
-=== validate_runtime.py ===
-  PASS runtime/00-entry.md = 821 chars (<= 1200)
-  PASS runtime/01-core-rules.md = 2198 chars (<= 3500)
-  PASS runtime/02-user-runtime-profile.md = 784 chars (<= 2000)
-  PASS runtime total = 3803 chars (<= 8000)
-  ...
---- 11 passed, 0 failed ---
-```
-
-然后把日常启动器**整段**贴给任意 AI(Claude / Codex / 任何对话),再给它一个具体任务:
-
-```text
-复制 launchers/总管AI-日常启动-v2.txt 全文  →  贴给你的 AI  →  给一个任务
-```
+**4 · 用起来。** 给你的 AI 任意一个任务。它会分类、只加载需要的、在规矩内动手,并回你三行 —— 就像下面这样:
 
 ## 看它怎么干活
 
