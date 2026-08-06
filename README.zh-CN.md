@@ -40,8 +40,8 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/architecture-dark.svg">
-    <img alt="两层:任意 AI 对话只加载 runtime 一层,在治理约束内动手;更深的层按需加载,你始终是唯一批准人。" src="docs/assets/architecture-light.svg" width="880">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/architecture-dark.png">
+    <img alt="两层:任意 AI 对话只加载 runtime 一层,在治理约束内动手;更深的层按需加载,你始终是唯一批准人。" src="docs/assets/architecture-light.png" width="880">
   </picture>
 </p>
 
@@ -51,8 +51,8 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/routing-dark.svg">
-    <img alt="每个任务先分类为 QUICK / NORMAL / STRUCTURAL / INCIDENT,各自回一份三行回执,STRUCTURAL 还要过批准人门禁。" src="docs/assets/routing-light.svg" width="880">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/routing-dark.png">
+    <img alt="每个任务先分类为 QUICK / NORMAL / STRUCTURAL / INCIDENT,各自回一份三行回执,STRUCTURAL 还要过批准人门禁。" src="docs/assets/routing-light.png" width="880">
   </picture>
 </p>
 

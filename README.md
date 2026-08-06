@@ -40,8 +40,8 @@ A smarter model doesn't fix this. **Pinning the facts into files** does — so a
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/architecture-dark.svg">
-    <img alt="Two layers: any AI conversation loads only the runtime layer, then acts within governance; deeper layers load on demand and you stay the only approver." src="docs/assets/architecture-light.svg" width="880">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/architecture-dark.png">
+    <img alt="Two layers: any AI conversation loads only the runtime layer, then acts within governance; deeper layers load on demand and you stay the only approver." src="docs/assets/architecture-light.png" width="880">
   </picture>
 </p>
 
@@ -51,8 +51,8 @@ The full charter, your complete profile, every handbook — they all exist, but 
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/routing-dark.svg">
-    <img alt="Every task is classified into QUICK, NORMAL, STRUCTURAL, or INCIDENT; each returns a three-line receipt, STRUCTURAL through an approver gate." src="docs/assets/routing-light.svg" width="880">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/routing-dark.png">
+    <img alt="Every task is classified into QUICK, NORMAL, STRUCTURAL, or INCIDENT; each returns a three-line receipt, STRUCTURAL through an approver gate." src="docs/assets/routing-light.png" width="880">
   </picture>
 </p>
 
