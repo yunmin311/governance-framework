@@ -141,7 +141,7 @@ The framework corrects itself: it stops and fixes its own drift (`GOV-013`), alw
 
 ```text
 core/        governance kernel — 7 principles, 4-D status, authority order, gates
-runtime/     minimal-loading layer — entry + rules GOV-001~012 + user slot + router
+runtime/     minimal-loading layer — entry + rules GOV-001~015 + user slot + router
 launchers/   per-mode starters & manual prompts   ← copy-paste ready
 profiles/    user/ profile template · machines/ machine template
 projects/    project-adapter protocol & template
