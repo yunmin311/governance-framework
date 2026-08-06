@@ -35,6 +35,7 @@ A smarter model doesn't fix this. **Pinning the facts into files** does — so a
 | 💻 **New computer** | "Where's the project? Who can commit? Which file is canonical?" | Method unchanged — you only re-fill *this machine's* facts |
 | 💬 **Many chats at once** | They talk past each other; incidents are unexplainable | One authority order + 4-D status + gates — every conflict is traceable |
 | 📋 **A progress report** | A paragraph of "I understand…" with zero evidence | Three lines: **Changed / Verified / Remaining** |
+| 🔁 **Switch model / account** | memory and preferences reset every time | basic memory + personalization follow you across agents |
 
 ## How it works — two layers, one rule
 
@@ -112,6 +113,19 @@ The framework ships *as* a skill: [`skills/global-ai-dialogue-governor`](skills/
 - **scales ceremony with risk** and hard-stops for goals, irreversible actions, public release, real spending, or a hard-permission change — the calls only you should make.
 
 One concise entry file, references one level deep. That's the whole engine — the rest of the repo is what it reads.
+
+## It grows with you — the `growth-secretary` skill
+
+A second skill ships alongside the governor: [`growth-secretary`](skills/growth-secretary/SKILL.md). On a weekly cadence (or on request) it reviews how you've been working, **proposes** what's worth remembering about your preferences, clarifies with you, and — only with your approval — settles the stable patterns into your profile. The system gets more personal over time and never learns behind your back.
+
+- **Four-tier memory** (conversation → atom → scenario → persona) as plain markdown files.
+- **Your memory follows you** — kept in a neutral, portable place, so switching model or account doesn't wipe it.
+- **You approve what's learned** — contradicting evidence can undo a learned pattern; nothing is auto-entrenched.
+- **Code memory** activates only on code work.
+
+## Built-in guardrails
+
+The framework corrects itself: it stops and fixes its own drift (`GOV-013`), always replies in **your** language no matter what language the documents are in (`GOV-015`), and redirects out-of-remit questions instead of overstepping (`GOV-014`).
 
 ## The 7 principles it guarantees
 
