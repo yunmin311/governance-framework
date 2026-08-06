@@ -38,41 +38,30 @@
 
 ## 怎么运作 —— 两层,一条铁律
 
-```mermaid
-flowchart TB
-    T["任意 AI 对话<br/>接手一个任务"] --> E
-    subgraph RT["runtime/ — 普通任务唯一加载的一层"]
-        direction LR
-        E["00 入口<br/>分类"] --> RO["router<br/>读哪些文件"] --> CR["承重规则<br/>GOV-001~012"] --> UP["你的画像"]
-    end
-    RT --> ACT["在治理约束内动手"]
-    ACT -->|"高风险 · 结构级 · 事故"| DEEP["core/ 完整宪章 · docs/ 手册<br/>仅按需加载"]
-    ACT --> YOU["✋ 你 —— 方向 / 删除 / 发布<br/>的唯一批准人"]
-```
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/architecture-dark.svg">
+    <img alt="两层:任意 AI 对话只加载 runtime 一层,在治理约束内动手;更深的层按需加载,你始终是唯一批准人。" src="docs/assets/architecture-light.svg" width="880">
+  </picture>
+</p>
 
 完整宪章、你的全套画像、每一本手册都在那儿,但**「存在 ≠ 要读它」**。普通任务永远只加载 runtime 这一层。
 
 ## 每个任务先分类,再决定开哪些重文件
 
-```mermaid
-flowchart TD
-    A["新任务"] --> B{"分类<br/>(runtime/00-entry)"}
-    B -->|"改一个已知文件 · 可回滚"| Q["QUICK<br/>3 文件 · 约 3800 字"]
-    B -->|"已治理项目内的常规活"| N["NORMAL<br/>+ 项目正本"]
-    B -->|"新机 · 跨项目 · 宪章级"| S["STRUCTURAL<br/>完整开工声明 + 门禁"]
-    B -->|"正本冲突 · 越权 · 泄露风险"| I["INCIDENT<br/>只读 · 隔离"]
-    Q --> R["回执<br/>Changed / Verified / Remaining"]
-    N --> R
-    S --> G{"批准人<br/>门禁"} --> R
-    I --> R
-```
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/routing-dark.svg">
+    <img alt="每个任务先分类为 QUICK / NORMAL / STRUCTURAL / INCIDENT,各自回一份三行回执,STRUCTURAL 还要过批准人门禁。" src="docs/assets/routing-light.svg" width="880">
+  </picture>
+</p>
 
 两档拿不准?取写入面更小的那一档。一旦涉及不可逆、越权或私密材料,直接进 **INCIDENT**。
 
 ## 快速开始 —— 2 分钟
 
 ```bash
-git clone <你 fork 的本框架仓>
+git clone https://github.com/yunmin311/governance-framework.git
 cd governance-framework
 python -X utf8 tools/validate_runtime.py    # 先证明它是真的、测过的
 ```
@@ -111,6 +100,18 @@ python -X utf8 tools/validate_runtime.py    # 先证明它是真的、测过的
 > ```
 
 没有冗长开工声明,没有整本规则复述。**该轻的地方轻,该停的地方停** —— 只有真正高风险(删除 / 越权 / 公开发布)才升级模式、走门禁、停下来问*你*。
+
+## 引擎 —— 一个可移植的「总管」skill
+
+框架本体就是一个 skill:[`skills/global-ai-dialogue-governor`](skills/global-ai-dialogue-governor/SKILL.md)。装上它(Claude / Codex / 任意 agent),或直接贴启动器,任何 AI 在动你的东西之前都会变成一个**总管**:
+
+- **只选一个模式** —— `DISCOVERY-READ-ONLY` / `NORMAL-GOVERNANCE` / `INCIDENT-READ-ONLY`,并先声明该模式里什么不许碰;
+- **只加载任务需要的层** —— 日常活先走 `runtime/`,而不是把整个库倒进对话;
+- **四维状态分开记** —— 生命周期 / 执行 / 验证 / 事故,绝不把 `UNKNOWN`、`DRAFT` 当成品;
+- **动手前先声明**角色、地盘、正本来源、Git 路径,收尾给一份「实际读了什么 / 改了什么 / 剩什么」的回执;
+- **按风险配仪式** —— 遇到目标方向、不可逆动作、公开发布、真实花钱、改硬权限(这些只有你能定)就直接刹车。
+
+一个精简入口文件,references 只下探一层。这就是全部引擎,仓库其余部分都是它按需去读的。
 
 ## 它保证的 7 条根本原则
 

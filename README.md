@@ -38,41 +38,30 @@ A smarter model doesn't fix this. **Pinning the facts into files** does — so a
 
 ## How it works — two layers, one rule
 
-```mermaid
-flowchart TB
-    T["Any AI conversation<br/>picks up a task"] --> E
-    subgraph RT["runtime/ — the ONLY layer an everyday task loads"]
-        direction LR
-        E["00 entry<br/>classify"] --> RO["router<br/>which files"] --> CR["core rules<br/>GOV-001~012"] --> UP["your profile"]
-    end
-    RT --> ACT["Act within governance"]
-    ACT -->|"risk · structural · incident"| DEEP["core/ full charter · docs/ handbooks<br/>loaded only on demand"]
-    ACT --> YOU["✋ You — the only approver of<br/>direction · deletion · publishing"]
-```
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/architecture-dark.svg">
+    <img alt="Two layers: any AI conversation loads only the runtime layer, then acts within governance; deeper layers load on demand and you stay the only approver." src="docs/assets/architecture-light.svg" width="880">
+  </picture>
+</p>
 
 The full charter, your complete profile, every handbook — they all exist, but **"exists ≠ must be read."** An everyday task never loads more than the runtime layer.
 
 ## Every task is classified before any heavy file opens
 
-```mermaid
-flowchart TD
-    A["New task"] --> B{"classify<br/>(runtime/00-entry)"}
-    B -->|"edit a known file · reversible"| Q["QUICK<br/>3 files · ~3,800 chars"]
-    B -->|"routine work in a governed project"| N["NORMAL<br/>+ project canonical"]
-    B -->|"new machine · cross-project · charter-level"| S["STRUCTURAL<br/>full declaration + gate"]
-    B -->|"canonical conflict · privilege · leak risk"| I["INCIDENT<br/>read-only · quarantine"]
-    Q --> R["Receipt<br/>Changed / Verified / Remaining"]
-    N --> R
-    S --> G{"approver<br/>gate"} --> R
-    I --> R
-```
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/routing-dark.svg">
+    <img alt="Every task is classified into QUICK, NORMAL, STRUCTURAL, or INCIDENT; each returns a three-line receipt, STRUCTURAL through an approver gate." src="docs/assets/routing-light.svg" width="880">
+  </picture>
+</p>
 
 Unsure between two modes? Drop to the one with the smaller write surface. The moment something is irreversible, over-reaching, or touches private material, it goes straight to **INCIDENT**.
 
 ## Quickstart — 2 minutes
 
 ```bash
-git clone <your-fork-url>
+git clone https://github.com/yunmin311/governance-framework.git
 cd governance-framework
 python -X utf8 tools/validate_runtime.py    # prove it's real and tested
 ```
@@ -111,6 +100,18 @@ copy launchers/总管AI-日常启动-v2.txt in full  →  paste to your AI  → 
 > ```
 
 No opening ceremony, no reciting the rulebook. **Light where it should be light, hard-stop where it must stop** — only genuine risk (deletion, over-reach, publishing) escalates the mode, walks a gate, and pauses for *you*.
+
+## The engine — a portable governor skill
+
+The framework ships *as* a skill: [`skills/global-ai-dialogue-governor`](skills/global-ai-dialogue-governor/SKILL.md). Enable it (Claude / Codex / any agent), or paste the launcher, and any AI turns into a **governor** that, before it touches your work:
+
+- **picks exactly one mode** — `DISCOVERY-READ-ONLY`, `NORMAL-GOVERNANCE`, or `INCIDENT-READ-ONLY` — and states what's off-limits in it;
+- **loads only the layers the task needs**, routing everyday work through `runtime/` first instead of pasting the whole library into the chat;
+- **keeps four state dimensions apart** — lifecycle / execution / verification / incident — and never promotes `UNKNOWN` or `DRAFT` into finished work;
+- **declares role, ownership, canonical sources, and Git paths** up front, then returns a receipt of what it actually read, changed, and left;
+- **scales ceremony with risk** and hard-stops for goals, irreversible actions, public release, real spending, or a hard-permission change — the calls only you should make.
+
+One concise entry file, references one level deep. That's the whole engine — the rest of the repo is what it reads.
 
 ## The 7 principles it guarantees
 
