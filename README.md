@@ -1,93 +1,155 @@
-# AI 对话治理框架 · Reusable Governance for Multi-AI Work
+<div align="center">
 
-> **多个 AI 对话老是失忆、互相打架、说不清哪份文件才算数?**
-> 这套框架把「事实」钉进文件,让任何 AI 一接手就知道:**去哪读、谁说了算、什么还没确认、什么时候该停下问你。**
+# 🧭 AI Governance Framework
 
-`治理规范 v2.2` · `发布 v2.2.3` · `校验 validate_runtime 11 / validate_paths 6 / validate_release 4 全通过` · `纯复用层,零个人信息`
+### One source of truth for every AI you work with — so they stop forgetting, contradicting each other, and arguing over which file is real.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-3da639.svg)](LICENSE)
+[![governance spec](https://img.shields.io/badge/governance%20spec-v2.2-4c6ef5.svg)](VERSIONS.md)
+[![release](https://img.shields.io/badge/release-v2.2.3-4c6ef5.svg)](VERSIONS.md)
+[![validators](https://img.shields.io/badge/validators-21%20passing-3da639.svg)](tools/)
+[![personal info](https://img.shields.io/badge/personal%20info-none-3da639.svg)](#)
+
+**English** · [简体中文](README.zh-CN.md)
+
+</div>
 
 ---
 
-## 30 秒看它值不值
+## The problem this solves
 
-|  | 没有它 | 有了它 |
+You don't use just one AI anymore. You use several — Claude in one window, Codex in another, a browser tab, a teammate's session. Each one:
+
+- **forgets** what was decided last time,
+- **contradicts** the other assistants,
+- can't tell you **which file is authoritative**, and
+- either refuses to touch anything, or quietly does something irreversible.
+
+A smarter model doesn't fix this. **Pinning the facts into files** does — so any AI that picks up the work already knows *where to read, who decides, what is still unconfirmed, and when to stop and ask you.*
+
+## What you actually get
+
+|  | Without it | With this framework |
 |---|---|---|
-| 改个错别字 | AI 把整本 14KB 宪章 + 你全部偏好塞进上下文 | 先判 **QUICK**,只读 3 个小文件(约 3800 字) |
-| 换台电脑 | 忘了项目在哪、谁能提交、哪份是正本 | 方法一字不改,只重填本机事实 |
-| 多个对话 | 各说各话、互相覆盖、事故说不清 | 一套权威顺序 + 四维状态 + 门禁,冲突有据可查 |
-| 回执 | 长篇「我理解了…」,证据全无 | 三行:Changed / Verified / Remaining |
+| 🔧 **Fix a typo** | AI swallows the whole 14 KB charter + all your preferences | Classified **QUICK** — reads 3 small files (~3,800 chars) and acts |
+| 💻 **New computer** | "Where's the project? Who can commit? Which file is canonical?" | Method unchanged — you only re-fill *this machine's* facts |
+| 💬 **Many chats at once** | They talk past each other; incidents are unexplainable | One authority order + 4-D status + gates — every conflict is traceable |
+| 📋 **A progress report** | A paragraph of "I understand…" with zero evidence | Three lines: **Changed / Verified / Remaining** |
 
-## 快速开始 · 5 分钟
+## How it works — two layers, one rule
 
-```bash
-git clone <你 fork 的本框架仓>
-cd governance-framework
-python -X utf8 tools/validate_runtime.py     # 先证明它是真的、测过的
+```mermaid
+flowchart TB
+    T["Any AI conversation<br/>picks up a task"] --> E
+    subgraph RT["runtime/ — the ONLY layer an everyday task loads"]
+        direction LR
+        E["00 entry<br/>classify"] --> RO["router<br/>which files"] --> CR["core rules<br/>GOV-001~012"] --> UP["your profile"]
+    end
+    RT --> ACT["Act within governance"]
+    ACT -->|"risk · structural · incident"| DEEP["core/ full charter · docs/ handbooks<br/>loaded only on demand"]
+    ACT --> YOU["✋ You — the only approver of<br/>direction · deletion · publishing"]
 ```
 
-你会看到:
+The full charter, your complete profile, every handbook — they all exist, but **"exists ≠ must be read."** An everyday task never loads more than the runtime layer.
+
+## Every task is classified before any heavy file opens
+
+```mermaid
+flowchart TD
+    A["New task"] --> B{"classify<br/>(runtime/00-entry)"}
+    B -->|"edit a known file · reversible"| Q["QUICK<br/>3 files · ~3,800 chars"]
+    B -->|"routine work in a governed project"| N["NORMAL<br/>+ project canonical"]
+    B -->|"new machine · cross-project · charter-level"| S["STRUCTURAL<br/>full declaration + gate"]
+    B -->|"canonical conflict · privilege · leak risk"| I["INCIDENT<br/>read-only · quarantine"]
+    Q --> R["Receipt<br/>Changed / Verified / Remaining"]
+    N --> R
+    S --> G{"approver<br/>gate"} --> R
+    I --> R
+```
+
+Unsure between two modes? Drop to the one with the smaller write surface. The moment something is irreversible, over-reaching, or touches private material, it goes straight to **INCIDENT**.
+
+## Quickstart — 2 minutes
+
+```bash
+git clone <your-fork-url>
+cd governance-framework
+python -X utf8 tools/validate_runtime.py    # prove it's real and tested
+```
+
+Real output:
 
 ```text
+=== validate_runtime.py ===
+  PASS runtime/00-entry.md = 821 chars (<= 1200)
+  PASS runtime/01-core-rules.md = 2198 chars (<= 3500)
+  PASS runtime/02-user-runtime-profile.md = 784 chars (<= 2000)
+  PASS runtime total = 3803 chars (<= 8000)
+  ...
 --- 11 passed, 0 failed ---
 ```
 
-然后把日常启动器**整段**贴给你的 AI(Claude / Codex / 任意对话),再给它一个任务:
+Then paste the daily launcher into any AI — Claude, Codex, anything — and hand it one concrete task:
 
 ```text
-# 复制 launchers/总管AI-日常启动-v2.txt 全文 → 贴给 AI → 给一个具体任务
+copy launchers/总管AI-日常启动-v2.txt in full  →  paste to your AI  →  give it a task
 ```
 
-## 看它怎么干活(一个真实任务)
+## Watch it work
 
-> **你**:帮我把 README 里那个错别字改一下。
+> **You:** fix that typo in the README.
 >
-> **AI(照本框架)**:
-> 1. 读 `runtime/00-entry.md` → 判为 **QUICK**(改一个已知文件、可回滚)。
-> 2. 只加载 `runtime/` 三件(入口 + 承重规则 + 用户画像),**不翻完整宪章**。
-> 3. 改完给你三行:
+> **AI, running under this framework:**
+> 1. reads `runtime/00-entry.md` → classifies **QUICK** (one known file, reversible)
+> 2. loads only the 3 runtime files — **does not open the full charter**
+> 3. reports three lines:
 >
 > ```text
-> Changed:   README.md 第 12 行 "的的" → "的"
-> Verified:  已重读该行确认
-> Remaining: 无
+> Changed:   README.md line 12   "teh" → "the"
+> Verified:  re-read the line to confirm
+> Remaining: none
 > ```
 
-没有长篇开工声明、没有整本规则复述——**该轻的地方轻,该停的地方停。** 只有真正高风险(删除 / 越权 / 公开发布)才升级模式、走门禁、停下来问你。
+No opening ceremony, no reciting the rulebook. **Light where it should be light, hard-stop where it must stop** — only genuine risk (deletion, over-reach, publishing) escalates the mode, walks a gate, and pauses for *you*.
 
-## 它保证什么 · 七条根本原则
+## The 7 principles it guarantees
 
-1. **用户是唯一最高决策人** —— 方向、批准、删除、发布终归你。
-2. **文档高于对话记忆** —— 给不出来源的,只是待核线索,不是事实。
-3. **一事一正本** —— 每类事实只有一个可编辑真相源。
-4. **先证明来源,再陈述事实** —— 缺证据就标 `UNKNOWN`,不硬编。
-5. **探索与决定分离** —— 只有指定批准人能把草稿升为「已批准」。
-6. **没进正式记录,不算完成** —— 无产物 / 验证 / 路径 / 回滚 = 口头完成。
-7. **总管有治理权,无无限执行权** —— 协调可以,越权删改不行。
+1. **You are the only top decision-maker** — direction, approval, deletion, publishing end with you.
+2. **Documents outrank chat memory** — anything without a source is a lead, not a fact.
+3. **One canonical per fact** — every kind of fact has exactly one editable source of truth.
+4. **Prove the source, then state the fact** — no evidence → mark `UNKNOWN`, never hardcode.
+5. **Exploration ≠ decision** — only a named approver promotes a draft to "approved."
+6. **Not in the record = not done** — no artifact / verification / path / rollback means verbal-only.
+7. **The governor governs, it does not rule** — coordination yes, unbounded execution no.
 
-## 结构一览
+## Repository layout
 
 ```text
-core/       治理内核(七原则 / 四维状态 / 权威顺序 / 门禁)
-runtime/    最小加载层(入口 + 承重规则 GOV-001~012 + 用户画像位 + 路由)
-launchers/  分模式启动 / 手动提示词  ← 复制即用
-profiles/   user/ 用户画像模板;machines/ 机器 Profile 模板
-projects/   项目 adapter 协议与模板
-adapters/   Claude / Codex / 通用 平台加载与硬权限适配
-templates/  开工声明、任务包、回执、决策记录…
-skills/     总管 skill(global-ai-dialogue-governor)
-tools/      校验器(validate_runtime / validate_paths / validate_release)
-docs/       专项手册(按需)  ·  VERSIONS.md 版本维度  ·  分层导航 两层怎么分
+core/        governance kernel — 7 principles, 4-D status, authority order, gates
+runtime/     minimal-loading layer — entry + rules GOV-001~012 + user slot + router
+launchers/   per-mode starters & manual prompts   ← copy-paste ready
+profiles/    user/ profile template · machines/ machine template
+projects/    project-adapter protocol & template
+adapters/    Claude / Codex / generic loading & hard-permission adapters
+templates/   opening declaration, task package, receipt, decision record…
+skills/      the governor skill (global-ai-dialogue-governor)
+tools/       validators — validate_runtime / validate_paths / validate_release
+docs/        deep-dive handbooks · layered-navigation guide
+VERSIONS.md  three version dimensions    ·    AGENTS.md  agent entry note
 ```
 
-## 换电脑 / 落地(3 步)
+## Take it to a new machine (3 steps)
 
-1. **带走本框架**(不改一个字)。
-2. 复制 `profiles/user/user-profile.template.md` 填成你的画像;用
-   `machine-profile.template.yaml` / `project-adapter.template.yaml` 为本机重填事实。
-   **填好的实例存进你自己的私有仓,别塞回本框架。**
-3. `python -X utf8 tools/validate_runtime.py` 自检。
+1. **Copy the framework as-is** — don't change a word.
+2. Fill `profiles/user/user-profile.template.md` with your own profile; use the machine / project templates to re-discover *this* machine's facts. **Keep filled-in instances in your own private repo — never push them back here.**
+3. `python -X utf8 tools/validate_runtime.py` to self-check.
 
-> 复用流程(本框架) vs 本机适配(你的私有仓)怎么分,见 `分层导航-复用层与本机层.md`。
+> Why the reusable layer and the machine-specific layer stay separate: see [`docs/分层导航-复用层与本机层.md`](docs/分层导航-复用层与本机层.md).
 
-## 许可
+## Versioning
 
-MIT License,见 `LICENSE`。(暂定 MIT,可日后调整。)
+Three independent dimensions — **governance spec**, **engineering wiring**, **release package** — so a doc-only fix never masquerades as a spec change. See [VERSIONS.md](VERSIONS.md).
+
+## License
+
+[MIT](LICENSE) — temporary; may be revisited.

@@ -54,8 +54,8 @@ else:
 
 # ---- 2. no stale Chinese zip-folder names in shipped entry docs -----------
 ENTRY_DOCS = [
-    "README.md", "00-从这里开始.md", "portable/README.md",
-    "分层导航-复用层与本机层.md", "profiles/machines/README.md",
+    "README.md", "README.zh-CN.md", "00-从这里开始.md", "portable/README.md",
+    "docs/分层导航-复用层与本机层.md", "profiles/machines/README.md",
     "projects/README.md", "projects/instances/README.md",
 ]
 STALE = ("框架/", "个人实例/", "文档/PDF", "文档/DOCX", "启动器/")
