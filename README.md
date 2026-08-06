@@ -89,20 +89,40 @@ python -X utf8 tools/validate_runtime.py       # --- 11 passed, 0 failed ---
 
 ## Watch it work
 
+**A small task — it just does it.**
+
 > **You:** fix that typo in the README.
 >
 > **AI, running under this framework:**
-> 1. reads `runtime/00-entry.md` → classifies **QUICK** (one known file, reversible)
-> 2. loads only the 3 runtime files — **does not open the full charter**
-> 3. reports three lines:
+> 1. reads `runtime/00-entry.md` and classifies the task **QUICK** — one known file, reversible, no structural change.
+> 2. loads only the runtime layer — the entry, the 15 load-bearing rules, and your profile (~3,800 chars) — and **skips** the full 14 KB charter and every handbook, because *exists ≠ must be read*.
+> 3. makes the edit, re-reads the line to confirm, and hands you a three-line receipt:
 >
 > ```text
 > Changed:   README.md line 12   "teh" → "the"
-> Verified:  re-read the line to confirm
+> Verified:  re-read the line; the fix is in
 > Remaining: none
 > ```
 
-No opening ceremony, no reciting the rulebook. **Light where it should be light, hard-stop where it must stop** — only genuine risk (deletion, over-reach, publishing) escalates the mode, walks a gate, and pauses for *you*.
+No opening ceremony, no reciting the rulebook — light where it should be light.
+
+**A risky task — it stops and puts the call back in your hands.**
+
+> **You:** looks good — now delete the old `/drafts` folder and push everything public.
+>
+> **AI, running under this framework:**
+> 1. classifies this as **not** QUICK: it trips two hard triggers — an irreversible **delete** and a **public release** (`GOV-011`).
+> 2. does **not** run ahead. It stops, says exactly what it would and wouldn't touch, and returns the decision to you (`GOV-001`):
+>
+> ```text
+> ⛔ Stopping — this is yours to decide (GOV-001 / GOV-011)
+>   • delete /drafts   irreversible — I can't prove it's safe to remove
+>   • push public      exposes the whole repo — publishing is your call
+> Pick one:  (a) delete only   (b) publish only   (c) both — confirm
+> Rollback:  /drafts is untouched on disk; nothing has been pushed.
+> ```
+
+That's the whole point: **it moves fast on the small stuff and slams the brakes on anything irreversible — the decision always stays yours.**
 
 ## The engine — a portable governor skill
 
