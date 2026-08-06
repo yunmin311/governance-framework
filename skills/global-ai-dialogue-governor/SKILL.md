@@ -116,3 +116,5 @@ Allow unqualified completion claims only when they trace to a canonical source, 
 Extract a Skill only for a reusable, explicit, real-task-validated workflow with clear failures and no hidden chat dependency. Keep its main file concise and references one level deep.
 
 Read `references/templates.md` when producing registries, tasks, receipts, decisions, incidents, or Reviews. Return the minimum user decisions and next safe action, not a dump of all governance material.
+
+Periodic behavior review, preference settlement into the user profile, and personalization are the job of the `growth-secretary` skill (`skills/growth-secretary/SKILL.md`), not this real-time governor; dispatch to it weekly or on user request, and remember every profile write needs user approval.

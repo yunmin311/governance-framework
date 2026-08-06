@@ -133,7 +133,7 @@ profiles/    user/ profile template · machines/ machine template
 projects/    project-adapter protocol & template
 adapters/    Claude / Codex / generic loading & hard-permission adapters
 templates/   opening declaration, task package, receipt, decision record…
-skills/      the governor skill (global-ai-dialogue-governor)
+skills/      governor + growth-secretary skills
 tools/       validators — validate_runtime / validate_paths / validate_release
 docs/        deep-dive handbooks · layered-navigation guide
 VERSIONS.md  three version dimensions    ·    AGENTS.md  agent entry note

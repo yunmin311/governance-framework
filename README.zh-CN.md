@@ -133,7 +133,7 @@ profiles/    user/ 用户画像模板 · machines/ 机器 Profile 模板
 projects/    项目 adapter 协议与模板
 adapters/    Claude / Codex / 通用 加载与硬权限适配
 templates/   开工声明、任务包、回执、决策记录……
-skills/      总管 skill(global-ai-dialogue-governor)
+skills/      总管 + 成长秘书 两个 skill
 tools/       校验器 —— validate_runtime / validate_paths / validate_release
 docs/        专项手册 · 分层导航指南
 VERSIONS.md  三个版本维度    ·    AGENTS.md  agent 入口说明
