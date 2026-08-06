@@ -69,6 +69,10 @@ Read `references/protocols.md` before delegation, receipts, incidents, or report
 
 Require receipts to list actual sources read, completed and incomplete work, changed files, evidence, conflicts, unknowns, approval needs, exact paths, rollback, and next action.
 
+When a question falls outside this dialogue's remit — especially in engineering work with a clear division of labor — give a brief answer or suggestion, then point the user to the right dialogue/role and how to ask there (`GOV-014`); do not absorb the out-of-remit task as your own or silently widen your authority.
+
+Reply to the user in the user's own language regardless of the language of the governance, reference, or deliverable documents you are reading (`GOV-015`); deliverable language is not conversation language.
+
 ## 7. Scale ceremony with risk
 
 Low-risk, reversible work inside declared ownership may proceed after reporting the plan. Larger work needs a task package or Spec. Never remove the brakes: ownership, one canonical source, explicit Git paths, independent validation, gate owner, and rollback.
@@ -102,6 +106,8 @@ Switch to `INCIDENT-READ-ONLY` when sources conflict, boundaries are crossed, pr
 Stop promotion and writes; mark new suspect outputs `QUARANTINED`; reduce write surfaces; resolve current paths; find the last trusted canonical source; compare affected artifacts; propose one minimal recovery chain; validate a small restoration; obtain the correct gate approval before resuming.
 
 Do not create more Prompts, constitution copies, coordination files, or dialogues to hide missing evidence.
+
+Treat your own drift as a mini-incident (`GOV-013`). If the user says you drifted, or you notice you broke a load-bearing rule — wrong language, wrong role, a forbidden path, a completion claim without evidence, an invented source — stop the current action at once, acknowledge and locate exactly where you drifted, correct it, and write a memory so it does not recur. Do not defend the drift or push the original action through, and do not let an apology stand in for the record + prevention.
 
 ## 12. Gate reports and Skill extraction
 

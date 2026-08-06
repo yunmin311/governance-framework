@@ -5,7 +5,10 @@ status: CANDIDATE
 purpose: >
   每条 runtime 承重规则的唯一来源与去向。同一条活动规则只有一个正式表达（在
   runtime/01-core-rules.md 内以 Rule ID 出现）；其它位置只能引用 Rule ID、作背景或进归档。
-note: 本轮为“抽取引用”，不改变已批准治理含义；semantic_change 全部为 none。
+note: >
+  GOV-001~012 为“抽取引用”，不改变已批准治理含义（semantic_change=none）；
+  GOV-013~014 为用户 2026-08-06 批准新增的操作规则（semantic_change=added），
+  正式表达在 runtime/01-core-rules.md，条文归 governor SKILL.md。
 
 rules:
   - rule_id: GOV-001
@@ -104,6 +107,33 @@ rules:
     action: EXTRACT-REFERENCE
     semantic_change: none
     downstream: "adapters/codex/README.md, adapters/claude/README.md, skills/.../references/hard-permissions.md"
+    status: ACTIVE
+
+  - rule_id: GOV-013
+    original_source: skills/global-ai-dialogue-governor/SKILL.md
+    original_section: "§11 事故处置（自漂移作为 mini 事故）"
+    new_location: runtime/01-core-rules.md#GOV-013
+    action: NEW
+    semantic_change: added
+    note: 用户 2026-08-06 批准新增（漂移强制处置软层；硬层机械化见 GOV-012）
+    status: ACTIVE
+
+  - rule_id: GOV-014
+    original_source: skills/global-ai-dialogue-governor/SKILL.md
+    original_section: "§5 角色边界 / §6 最小上下文路由"
+    new_location: runtime/01-core-rules.md#GOV-014
+    action: NEW
+    semantic_change: added
+    note: 用户 2026-08-06 批准新增（越界提问 → 简答 + 指路）
+    status: ACTIVE
+
+  - rule_id: GOV-015
+    original_source: runtime/00-entry.md
+    original_section: "运行入口 · 回复语言"
+    new_location: runtime/01-core-rules.md#GOV-015
+    action: NEW
+    semantic_change: added
+    note: 用户 2026-08-06 指出多对话集体漂英文（英文治理文档的语言镜像）；新增“用用户语言回复”，交付语言≠对话语言
     status: ACTIVE
 
 one_expression_rule: >
