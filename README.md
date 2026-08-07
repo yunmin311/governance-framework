@@ -8,6 +8,7 @@
 [![governance spec](https://img.shields.io/badge/governance%20spec-v2.2-4c6ef5.svg)](VERSIONS.md)
 [![release](https://img.shields.io/badge/release-v2.2.3-4c6ef5.svg)](VERSIONS.md)
 [![validators](https://img.shields.io/badge/validators-21%20passing-3da639.svg)](tools/)
+[![runtime budget](https://img.shields.io/badge/runtime%20budget-%E2%89%A48KB-4c6ef5.svg)](tools/validate_runtime.py)
 [![personal info](https://img.shields.io/badge/personal%20info-none-3da639.svg)](#)
 
 **English** · [简体中文](README.zh-CN.md)
@@ -36,6 +37,17 @@ A smarter model doesn't fix this. **Pinning the facts into files** does — so a
 | 💬 **Many chats at once** | They talk past each other; incidents are unexplainable | One authority order + 4-D status + gates — every conflict is traceable |
 | 📋 **A progress report** | A paragraph of "I understand…" with zero evidence | Three lines: **Changed / Verified / Remaining** |
 | 🔁 **Switch model / account** | memory and preferences reset every time | basic memory + personalization follow you across agents |
+
+## Why it holds up — the engineering
+
+Most "AI rulebooks" are a wall of text you paste and hope for. This one is built like a system, and every claim below is machine-checked:
+
+- **Governance that barely touches your context.** The always-loaded layer is *capped and measured* — entry ≤ 1,200 chars, core rules ≤ 3,500, your profile ≤ 2,000, **≤ 8,000 total**. `validate_runtime.py` fails if any file goes over. The full 14 KB charter and every handbook stay on disk and open only when a task needs them — so day to day, an AI reads a couple of KB, not your whole library.
+- **Every rule traces back to the charter.** All 15 `GOV-*` rules are pinned to their source in `migration/rule-traceability.yaml`, each tagged `none` (verbatim extraction) or `added` (genuinely new) — so you can *prove* the fast runtime layer never quietly drifted from the constitution it summarizes.
+- **It validates itself — 21 checks across 3 gates.** `validate_runtime` (budgets · rule uniqueness · traceability), `validate_paths` (every path reference resolves; exactly one canonical per fact), and `validate_release` (YAML parses · no stale names · manifest complete). Break something and the validators tell you exactly what.
+- **"Personal info: none" is a build gate, not a promise.** The public repo is *generated* from a private source by a script that scrubs identifiers and then **hard-fails if a single forbidden string slips through**. That green badge exists because the build refused to ship a leaky copy.
+- **Pure files. Zero dependencies. Zero lock-in.** Everything is Markdown + YAML — no daemon, no package, no runtime. The same files govern Claude, Codex, a browser tab, or a teammate's session, because any agent can just read them.
+- **Three independent version axes** — governance spec · engineering wiring · release package — so a doc-only fix can never masquerade as a change to the rules.
 
 ## How it works — two layers, one rule
 
@@ -175,11 +187,9 @@ docs/        deep-dive handbooks · layered-navigation guide
 VERSIONS.md  three version dimensions    ·    AGENTS.md  agent entry note
 ```
 
-## Take it to a new machine (3 steps)
+## New machine, same method
 
-1. **Copy the framework as-is** — don't change a word.
-2. Fill `profiles/user/user-profile.template.md` with your own profile; use the machine / project templates to re-discover *this* machine's facts. **Keep filled-in instances in your own private repo — never push them back here.**
-3. `python -X utf8 tools/validate_runtime.py` to self-check.
+Copy the framework as-is, re-fill only *this* machine's facts with the templates, then run `python -X utf8 tools/validate_runtime.py`. That's the whole port — the method travels, the machine facts get rediscovered, and your filled-in instances stay in **your own private repo**.
 
 > Why the reusable layer and the machine-specific layer stay separate: see [`docs/分层导航-复用层与本机层.md`](docs/分层导航-复用层与本机层.md).
 
