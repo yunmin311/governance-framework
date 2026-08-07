@@ -49,3 +49,23 @@ npx skills add https://github.com/larashero3-dotcom/lieflat-charts
 - 图是**静态 HTML**，放复盘工作区，给用户绝对路径能直接打开。
 - 复盘产出的图属内部记录，**不进公开仓**，也不当成正式交付物冒充手册。
 - 图讲的结论仍要落成文字记忆原子，别只留图（防"图在人走、结论没沉淀"）。
+
+## 教程：实际出一张（照这个走）
+触发词：用户说"复盘出个图""可视化一下这段时间""来张记录图"。
+
+**第 1 步 · 定数据和图型。** 从记忆/回执里取**真实**数据（别编），挑最合适的图型（见上"适合记录类的图型"）。一张图只讲一件事。
+
+**第 2 步 · 出图，二选一。**
+- **A（装了 lieflat-charts 时）**：跟它说清数据 + 用途 + "用青瓷蓝（Porcelain）那套配色"。安装：`npx skills add https://github.com/larashero3-dotcom/lieflat-charts`。
+- **B（保底，任何环境都行）**：直接写一份静态 HTML，配色用上面钉死的青瓷蓝 CSS 变量；要给用户看预览就用无头 Edge 渲成 PNG（跟框架 `tools/render_diagrams.ps1` 同一套）：
+  ```powershell
+  & "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" `
+    --headless=new --disable-gpu --hide-scrollbars `
+    --force-device-scale-factor=2 --window-size=<宽>,<高> `
+    --user-data-dir=<临时目录> --screenshot=<out.png> <html 的 file:/// 地址>
+  ```
+  窗口尺寸必须和 HTML 里那张卡片的固定尺寸一致，否则右/下会出白边（这条坑见 `render_diagrams.ps1` 注释）。
+
+**第 3 步 · 落位。** 图放复盘工作区（Obsidian 里能读），给用户绝对路径。不进公开仓、不当正式手册；图讲的结论仍落成文字原子。
+
+**做过的例子**：“治理系统·本轮进度记录”（4 个关键数 + 6 节点时间线，暖纸底 `#F7F2EB` + 靛蓝阶，末节点加圈强调），就是照 B 出的。
