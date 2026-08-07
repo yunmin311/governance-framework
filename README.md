@@ -71,6 +71,12 @@ The full charter, your complete profile, every handbook — they all exist, but 
 
 Unsure between two modes? Drop to the one with the smaller write surface. The moment something is irreversible, over-reaching, or touches private material, it goes straight to **INCIDENT**.
 
+## Simplest start — let your AI set it up
+
+Clone it, then tell your AI: **"Read `BOOTSTRAP.md` and set this framework up for me."** It reads the charter, gives you a short checklist — your role, your projects and where they live, who may commit, which guardrails — adapts the templates to your machine, and reports what's done and what still needs you.
+
+Prefer to wire it by hand? The four steps below.
+
 ## Get started
 
 **1 · Install it into your AI.** Clone, then drop the two skills into your agent's skills folder so any conversation can pick them up:
