@@ -49,6 +49,8 @@ The framework is small, and most of it is enforced by scripts rather than good i
 - **Plain files, no dependencies.** Everything is Markdown and YAML, with no daemon, package, or runtime to install. The same files work with Claude, Codex, or a browser tab, since an agent only has to read them.
 - **Versioning has three axes:** governance spec, engineering wiring, and release package, so a documentation fix isn't mistaken for a change to the rules.
 
+Full feature catalog: **[FEATURES.md](FEATURES.md)** — the complete list, including the parts a README can't show.
+
 ## How it works — two layers, one rule
 
 <p align="center">
