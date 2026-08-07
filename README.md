@@ -38,16 +38,16 @@ A smarter model doesn't fix this. **Pinning the facts into files** does — so a
 | 📋 **A progress report** | A paragraph of "I understand…" with zero evidence | Three lines: **Changed / Verified / Remaining** |
 | 🔁 **Switch model / account** | memory and preferences reset every time | basic memory + personalization follow you across agents |
 
-## Why it holds up — the engineering
+## Under the hood
 
-Most "AI rulebooks" are a wall of text you paste and hope for. This one is built like a system, and every claim below is machine-checked:
+The framework is small, and most of it is enforced by scripts rather than good intentions:
 
-- **Governance that barely touches your context.** The always-loaded layer is *capped and measured* — entry ≤ 1,200 chars, core rules ≤ 3,500, your profile ≤ 2,000, **≤ 8,000 total**. `validate_runtime.py` fails if any file goes over. The full 14 KB charter and every handbook stay on disk and open only when a task needs them — so day to day, an AI reads a couple of KB, not your whole library.
-- **Every rule traces back to the charter.** All 15 `GOV-*` rules are pinned to their source in `migration/rule-traceability.yaml`, each tagged `none` (verbatim extraction) or `added` (genuinely new) — so you can *prove* the fast runtime layer never quietly drifted from the constitution it summarizes.
-- **It validates itself — 21 checks across 3 gates.** `validate_runtime` (budgets · rule uniqueness · traceability), `validate_paths` (every path reference resolves; exactly one canonical per fact), and `validate_release` (YAML parses · no stale names · manifest complete). Break something and the validators tell you exactly what.
-- **"Personal info: none" is a build gate, not a promise.** The public repo is *generated* from a private source by a script that scrubs identifiers and then **hard-fails if a single forbidden string slips through**. That green badge exists because the build refused to ship a leaky copy.
-- **Pure files. Zero dependencies. Zero lock-in.** Everything is Markdown + YAML — no daemon, no package, no runtime. The same files govern Claude, Codex, a browser tab, or a teammate's session, because any agent can just read them.
-- **Three independent version axes** — governance spec · engineering wiring · release package — so a doc-only fix can never masquerade as a change to the rules.
+- **The always-loaded layer has a size cap.** Entry, core rules, and your profile are budgeted at 1,200 / 3,500 / 2,000 non-whitespace characters (8,000 total), and `validate_runtime.py` fails if any file goes over. The full 14 KB charter and the handbooks stay on disk and are read only when a task needs them, so routine work loads a few KB instead of the whole library.
+- **Rules trace back to the charter.** The 15 `GOV-*` rules are each pinned to a source in `migration/rule-traceability.yaml` and tagged `none` (extracted verbatim) or `added` (new), so you can check that the runtime layer hasn't drifted from the charter it summarizes.
+- **Three validators, 21 checks.** `validate_runtime` covers the budgets, rule uniqueness, and traceability; `validate_paths` checks that every path reference resolves and each fact has one canonical source; `validate_release` checks that the YAML parses and no stale names are left behind.
+- **The "no personal info" badge is a build step.** The public repo is generated from a private source: the build scrubs identifiers, then aborts if any string on a forbidden list survives. It won't produce a copy that leaks.
+- **Plain files, no dependencies.** Everything is Markdown and YAML, with no daemon, package, or runtime to install. The same files work with Claude, Codex, or a browser tab, since an agent only has to read them.
+- **Versioning has three axes:** governance spec, engineering wiring, and release package, so a documentation fix isn't mistaken for a change to the rules.
 
 ## How it works — two layers, one rule
 
@@ -88,7 +88,7 @@ Using Codex or another agent? Copy into that agent's skills directory instead �
 - use `profiles/machines/machine-profile.template.yaml` + `projects/project-adapter.template.yaml` to record where your projects live and who may commit;
 - keep these filled-in files in **your own private repo** — never push them back here.
 
-This is what turns "a framework on disk" into "governs *my* work, across *my* machines and models."
+Without this step it is just generic files on disk; with it, it governs your own work across your machines and models.
 
 **3 · Verify.**
 
@@ -116,7 +116,7 @@ python -X utf8 tools/validate_runtime.py       # --- 11 passed, 0 failed ---
 > Remaining: none
 > ```
 
-No opening ceremony, no reciting the rulebook — light where it should be light.
+No preamble and no reciting the rulebook; the amount of process matches the size of the task.
 
 **A risky task — it stops and puts the call back in your hands.**
 
@@ -134,7 +134,7 @@ No opening ceremony, no reciting the rulebook — light where it should be light
 > Rollback:  /drafts is untouched on disk; nothing has been pushed.
 > ```
 
-That's the whole point: **it moves fast on the small stuff and slams the brakes on anything irreversible — the decision always stays yours.**
+Both cases follow the same rule: it moves quickly on small, reversible work and stops before anything irreversible, and the decision stays with you.
 
 ## The engine — a portable governor skill
 
