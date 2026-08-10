@@ -183,7 +183,7 @@ python -X utf8 tools/validate_runtime.py       # --- 11 passed, 0 failed ---
 
 ```text
 core/        治理内核:七原则 / 四维状态 / 权威顺序 / 门禁
-runtime/     最小加载层:入口 + 承重规则 GOV-001~015 + 用户画像位 + 路由
+runtime/     最小加载层:入口 + 承重规则 GOV-* + 用户画像位 + 路由
 launchers/   分模式启动 & 手动提示词   ← 复制即用
 profiles/    user/ 用户画像模板 · machines/ 机器 Profile 模板
 projects/    项目 adapter 协议与模板

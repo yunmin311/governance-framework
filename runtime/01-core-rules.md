@@ -106,3 +106,10 @@
 - required_action: 用用户自己的语言回复（跟随用户，具体语言见用户画像）；交付物 / 文档语言 ≠ 对话语言
 - stop_condition: 因为在读某语言的文档，就用那语言回复用户
 - canonical_source: runtime/00-entry.md · profiles/user 用户画像
+
+### GOV-016 · 先发现后创造，先复用后自建（Reuse-First）
+- scope: 任何新问题 / 新能力 / 新工具 / 新工作流 / 复杂实现 —— 设计、代码、做 skill·插件、自动化、修 bug 都算
+- trigger: 准备动手产出，尤其想从零发明时
+- required_action: 走 Discover → Evaluate → Reuse/Adapt → Build。先检索已有（成熟实践 / 开源 / 官方能力 / 已装 skill·plugin·library / 项目内现有工具 / 相似 workflow），判断能否直接用·组合用·改造用；并说清【找到什么 / 各解决什么 / 哪可直接复用 / 哪不适用 / 为何最终复用·改造·自建】。只贴几个链接就接着按自己的写 = 没过门禁
+- stop_condition: 没检索已有、或没给出上述判断，就从零实现（除非已确认现有方案满足不了关键约束）
+- canonical_source: runtime/00-entry.md · core/01

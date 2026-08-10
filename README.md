@@ -43,7 +43,7 @@ A smarter model doesn't fix this. **Pinning the facts into files** does — so a
 The framework is small, and most of it is enforced by scripts rather than good intentions:
 
 - **The always-loaded layer has a size cap.** Entry, core rules, and your profile are budgeted at 1,200 / 3,500 / 2,000 non-whitespace characters (8,000 total), and `validate_runtime.py` fails if any file goes over. The full 14 KB charter and the handbooks stay on disk and are read only when a task needs them, so routine work loads a few KB instead of the whole library.
-- **Rules trace back to the charter.** The 15 `GOV-*` rules are each pinned to a source in `migration/rule-traceability.yaml` and tagged `none` (extracted verbatim) or `added` (new), so you can check that the runtime layer hasn't drifted from the charter it summarizes.
+- **Rules trace back to the charter.** The `GOV-*` load-bearing rules are each pinned to a source in `migration/rule-traceability.yaml` and tagged `none` (extracted verbatim) or `added` (new), so you can check that the runtime layer hasn't drifted from the charter it summarizes.
 - **Three validators, 21 checks.** `validate_runtime` covers the budgets, rule uniqueness, and traceability; `validate_paths` checks that every path reference resolves and each fact has one canonical source; `validate_release` checks that the YAML parses and no stale names are left behind.
 - **The "no personal info" badge is a build step.** The public repo is generated from a private source: the build scrubs identifiers, then aborts if any string on a forbidden list survives. It won't produce a copy that leaks.
 - **Plain files, no dependencies.** Everything is Markdown and YAML, with no daemon, package, or runtime to install. The same files work with Claude, Codex, or a browser tab, since an agent only has to read them.
@@ -183,7 +183,7 @@ The framework corrects itself: it stops and fixes its own drift (`GOV-013`), alw
 
 ```text
 core/        governance kernel — 7 principles, 4-D status, authority order, gates
-runtime/     minimal-loading layer — entry + rules GOV-001~015 + user slot + router
+runtime/     minimal-loading layer — entry + GOV-* rules + user slot + router
 launchers/   per-mode starters & manual prompts   ← copy-paste ready
 profiles/    user/ profile template · machines/ machine template
 projects/    project-adapter protocol & template

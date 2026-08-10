@@ -10,7 +10,7 @@ Everything this framework gives you, in one place — the reference companion to
 ## 2. Minimal-loading runtime (`runtime/`)
 - One entry file classifies every task into QUICK / NORMAL / STRUCTURAL / INCIDENT.
 - A router loads only the files a mode needs; the always-loaded layer is capped (<= 8,000 non-whitespace characters).
-- 15 `GOV-*` load-bearing rules, each traceable back to the charter.
+- `GOV-*` load-bearing rules, each traceable back to the charter.
 - A three-line receipt (Changed / Verified / Remaining) closes every task.
 
 ## 3. The governor skill (`skills/global-ai-dialogue-governor`)
