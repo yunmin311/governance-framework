@@ -17,7 +17,7 @@ Everything this framework gives you, in one place — the reference companion to
 - Picks exactly one mode and states what is off-limits in it.
 - Declares role, ownership, canonical sources, and Git paths before touching anything.
 - Scales ceremony with risk; hard-stops for goals, irreversible actions, public release, real spending, and hard-permission changes.
-- Self-correction: brakes on its own drift (GOV-013), redirects out-of-remit questions (GOV-014), replies in your language (GOV-015).
+- Self-correction: brakes on its own drift (GOV-013), redirects out-of-remit questions (GOV-014), replies in your language (GOV-015), and reuses before building from scratch (GOV-016).
 
 ## 4. The growth-secretary skill (`skills/growth-secretary`)
 - Four-tier memory (conversation -> atom -> scenario -> persona) as plain markdown.

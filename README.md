@@ -167,7 +167,7 @@ A second skill ships alongside the governor: [`growth-secretary`](skills/growth-
 
 ## Built-in guardrails
 
-The framework corrects itself: it stops and fixes its own drift (`GOV-013`), always replies in **your** language no matter what language the documents are in (`GOV-015`), and redirects out-of-remit questions instead of overstepping (`GOV-014`).
+The framework corrects itself: it stops and fixes its own drift (`GOV-013`), always replies in **your** language no matter what language the documents are in (`GOV-015`), redirects out-of-remit questions instead of overstepping (`GOV-014`), and looks for an existing solution before building anything from scratch (`GOV-016`).
 
 ## The 7 principles it guarantees
 
