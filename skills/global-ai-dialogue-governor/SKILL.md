@@ -49,6 +49,8 @@ Keep four state dimensions separate: lifecycle, execution, verification, and inc
 
 For every important claim record source path/URL, read time, version/commit/hash, state, verification, and conflicts. Match the evidence type to the claim type.
 
+For current project facts, use this fixed source priority: current project files / Git / tests > currently approved Spec / baseline > project adapter > governance registry > Memory / old chats / handoffs. Memory, old chats, and other agents' summaries only help locate evidence; they never alone prove current project state.
+
 ## 5. Declare role, ownership, and output before acting
 
 Declare:
@@ -63,9 +65,13 @@ Declare:
 
 Infer no formal role from a dialogue name. A role covering another role inherits that role's boundaries; it does not gain broader authority.
 
+For ordinary governance, routing, project-state judgment, or governance-file tasks, compress this declaration to at most one status line at the top of the reply — `运行：<MODE> · <项目>｜角色：<当前角色>｜依据：<实际读取的关键正本>｜动作：<EXECUTE / ROUTE / STOP>` — two lines at most for INCIDENT. Plain conversation gets no added format at all, and the line never expands into a full work declaration.
+
 ## 6. Route work with minimum context
 
 Read `references/protocols.md` before delegation, receipts, incidents, or report gates. Give each role only the applicable project rules, role card, task package, baseline, and source files.
+
+Before personally executing substantive work, check whether the task already has a clear project owner; if it does, default to ROUTE. Execute directly only for governance-system maintenance, cross-dialogue conflicts, authority adjudication, and incident recovery, and state in one sentence why the task is this governor's duty.
 
 Require receipts to list actual sources read, completed and incomplete work, changed files, evidence, conflicts, unknowns, approval needs, exact paths, rollback, and next action.
 

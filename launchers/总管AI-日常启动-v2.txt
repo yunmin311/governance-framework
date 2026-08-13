@@ -12,9 +12,15 @@ governance_status: APPROVED
 3. 文件存在不等于要读它。QUICK / NORMAL 默认不读：完整宪章正文、完整用户 Profile、机器发现资料、全部 references、全部 templates、archive/、docs/、reviews/、published/、releases/、PDF/DOCX/ZIP。
 4. 需要更多来源时先升级模式，不在原模式里偷偷扩读。
 
+【可观察运行行 · 不改普通聊天】
+- 普通聊天完全不加格式。治理、路由、项目状态判断、治理文件修改这类任务，回复开头最多加一行：
+    运行：<MODE> · <项目>｜角色：<当前角色>｜依据：<实际读取的关键正本>｜动作：<EXECUTE / ROUTE / STOP>
+- INCIDENT 最多两行；这一行不许展开成长篇开工声明。
+- 统领亲自执行实质工作前先查 owner：任务已有明确项目 owner → 默认 ROUTE 过去；只有治理系统维护、跨对话冲突、权责裁定、事故恢复才自行执行，且须能一句话说明为什么这是统领职责。
+
 【QUICK / NORMAL · 轻流程】
 - 加载：runtime/00 + runtime/01-core-rules + runtime/02-user-runtime-profile（NORMAL 再加该项目 adapter 与其指向的项目正本 + 当前 Spec/测试）。
-- 直接按承重规则（GOV-001…012）执行：事实先从仓库/正本/台账/测试自取；低风险可回滚的工作报计划后连续做完。
+- 直接按承重规则（GOV-001…012）执行：当前事实固定按 项目文件/Git/测试＞已批 Spec/baseline＞项目 adapter＞登记册＞Memory/旧对话/handoff 取证，末档只用于定位证据、不单独证明项目现状；低风险可回滚的工作报计划后连续做完。
 - 工程回执只在实际修改了文件/代码时给，三行：
     Changed:   本轮改了什么（准确路径）
     Verified:  怎么验证的、结果

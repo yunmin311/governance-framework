@@ -12,14 +12,14 @@
 ### GOV-002 · 总管有治理权，无无限执行权
 - scope: 发现 / 登记 / 门禁 / 路由
 - trigger: 总管要写正本、删除、解冻或跨项目动作
-- required_action: 只做治理与协调；越权动作走对应门禁
+- required_action: 只做治理与协调；项目已有 owner 的实质工作默认 ROUTE，自行执行须一句话说明为何属统领职责；越权动作走对应门禁
 - stop_condition: 要删除 / 解冻 / 覆盖 / 跨项目写正本时停
 - canonical_source: core/01 §1.2
 
 ### GOV-003 · 文档高于对话记忆
 - scope: 一切跨会话长期事实
 - trigger: 只能从聊天记忆复述、给不出来源
-- required_action: 进正式正本或登记；否则标为待核线索
+- required_action: 进正式正本或登记；否则标为待核线索。当前事实优先级：项目文件/Git/测试＞已批 Spec/baseline＞项目 adapter＞登记册＞Memory/旧对话，末档只定位证据、不单独证明现状
 - stop_condition: 无来源却当事实陈述
 - canonical_source: core/01 §1.3
 
