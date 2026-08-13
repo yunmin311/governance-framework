@@ -44,9 +44,8 @@ modes:
       - releases/
     max_governance_files: 3
     required_output:
-      - Changed
-      - Verified
-      - Remaining
+      - 仅当实际修改了文件/代码时：Changed / Verified / Remaining 三行工程回执
+      - 未改文件的回复：自然对话风格，不套固定模板
     git_behavior: 只改文件，不默认 commit/push；提交须为登记的 ordinary_commit_owner 且用户本轮授权
     escalation_conditions:
       - 跨项目影响
@@ -79,9 +78,8 @@ modes:
       - releases/
     max_governance_files: 5
     required_output:
-      - Changed
-      - Verified
-      - Remaining
+      - 仅当实际修改了文件/代码时：Changed / Verified / Remaining 三行工程回执
+      - 未改文件的回复：自然对话风格，不套固定模板
     git_behavior: 按项目 adapter 的 ordinary_commit_owner / push_owner；只暂存显式路径；子代理与无权角色不碰 Git
     escalation_conditions:
       - 需要机器发现资料或跨项目影响 → STRUCTURAL

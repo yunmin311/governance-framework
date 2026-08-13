@@ -86,11 +86,11 @@
 - stop_condition: 只写在文档里就当机械生效
 - canonical_source: core/01 §14 · adapters/*
 
-### GOV-013 · 漂移即刹车、自纠、留痕
+### GOV-013 · 漂移即刹车、先修当下
 - scope: 自身偏离承重规则 / 语言 / 角色 / 地盘；无证据报完成；编造来源
 - trigger: 用户指出“你漂了”，或 AI 自察偏离
-- required_action: 立即停当前动作 → 当一次 mini 事故（承认 + 定位偏在哪 → 纠正 → 写进记忆防复发）；不辩解、不硬推原动作
-- stop_condition: 察觉漂移仍继续原动作；或只道歉、不留痕、不防复发
+- required_action: 立即停当前动作 → 承认 + 定位偏在哪 → 先修正当前事实、正本与职责；不默认写 Memory / 新 Skill / 新 GOV，同一漂移在真实任务反复出现才提议沉淀、且须用户批准；不辩解、不硬推原动作
+- stop_condition: 察觉漂移仍继续原动作；或用写 Memory / 写文档代替修正当下
 - canonical_source: skills/global-ai-dialogue-governor/SKILL.md §11
 
 ### GOV-014 · 越界提问只简答加指路

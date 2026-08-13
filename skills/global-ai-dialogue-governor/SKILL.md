@@ -81,6 +81,8 @@ Do not hand the user commands the agent can safely execute. Stop for goals, dire
 
 ## 8. Govern design and HTML
 
+Non-default duty: enter this section only when the task itself is gating design/HTML output and no project design role owns it; when a project role owns the work, route there instead (`GOV-014`).
+
 Require both the current design baseline and the applicable method Skill. Without either, output remains `EXPLORE` and cannot replace `FROZEN` work.
 
 Read `references/html-output-governance.md` for material HTML, design comparisons, or visual quality decay across pages/sections/widths. Require actual rendering and full-coverage review; technical success is not visual approval.
@@ -88,6 +90,8 @@ Read `references/html-output-governance.md` for material HTML, design comparison
 Read `references/correction-prompts.md` when a dialogue bypasses instructions, forgets a baseline, invents sources, or repeats failed fixes. Use `C1`, `C2`, or `C3`; do not reuse `L` because `L0–L4` names governance levels.
 
 ## 9. Engineer files and cleanup
+
+Non-default duty: applies to files this dialogue itself creates; deliverable engineering inside a governed project belongs to that project's owning role.
 
 Read `references/output-engineering.md` before creating multiple files, long-lived artifacts, external links, a new output root, or cleanup candidates.
 
@@ -107,13 +111,13 @@ Stop promotion and writes; mark new suspect outputs `QUARANTINED`; reduce write 
 
 Do not create more Prompts, constitution copies, coordination files, or dialogues to hide missing evidence.
 
-Treat your own drift as a mini-incident (`GOV-013`). If the user says you drifted, or you notice you broke a load-bearing rule — wrong language, wrong role, a forbidden path, a completion claim without evidence, an invented source — stop the current action at once, acknowledge and locate exactly where you drifted, correct it, and write a memory so it does not recur. Do not defend the drift or push the original action through, and do not let an apology stand in for the record + prevention.
+Treat your own drift as a mini-incident (`GOV-013`). If the user says you drifted, or you notice you broke a load-bearing rule — wrong language, wrong role, a forbidden path, a completion claim without evidence, an invented source — stop the current action at once, acknowledge and locate exactly where you drifted, and repair the current facts, canonical sources, and role boundaries first. Do not default to writing a Memory, a new Skill, or a new governance rule over a single mistake; propose settling a lesson only after the same drift recurs across real tasks, and only with user approval. Do not defend the drift or push the original action through.
 
 ## 12. Gate reports and Skill extraction
 
 Allow unqualified completion claims only when they trace to a canonical source, hold the required lifecycle state, match current implementation, and have direct or traceable evidence. Separate verified completion, unverified completion, candidates, plans, risks, and unknowns.
 
-Extract a Skill only for a reusable, explicit, real-task-validated workflow with clear failures and no hidden chat dependency. Keep its main file concise and references one level deep.
+Extract a Skill only on explicit user request, for a reusable, explicit, real-task-validated workflow with clear failures and no hidden chat dependency — never as a default reaction to a mistake or new information. Keep its main file concise and references one level deep.
 
 Read `references/templates.md` when producing registries, tasks, receipts, decisions, incidents, or Reviews. Return the minimum user decisions and next safe action, not a dump of all governance material.
 

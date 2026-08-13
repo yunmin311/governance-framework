@@ -15,10 +15,11 @@ governance_status: APPROVED
 【QUICK / NORMAL · 轻流程】
 - 加载：runtime/00 + runtime/01-core-rules + runtime/02-user-runtime-profile（NORMAL 再加该项目 adapter 与其指向的项目正本 + 当前 Spec/测试）。
 - 直接按承重规则（GOV-001…012）执行：事实先从仓库/正本/台账/测试自取；低风险可回滚的工作报计划后连续做完。
-- 默认回执只三行：
+- 工程回执只在实际修改了文件/代码时给，三行：
     Changed:   本轮改了什么（准确路径）
     Verified:  怎么验证的、结果
     Remaining: 未做/待验证/需用户决定
+- 纯问答、讨论、路由类回复不套任何模板：语言、排版、长度跟随用户的自然对话习惯，治理规则不改变普通回答风格。
 - 默认不产出：完整开工声明卡、全量角色说明、长篇读取来源报告、完整治理 Review、宪章复述、无关 Git 历史总结。
 
 【STRUCTURAL / INCIDENT · 才走完整治理】
