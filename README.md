@@ -115,7 +115,7 @@ python -X utf8 tools/validate_runtime.py       # --- 11 passed, 0 failed ---
 >
 > **AI, running under this framework:**
 > 1. reads `runtime/00-entry.md` and classifies the task **QUICK** — one known file, reversible, no structural change.
-> 2. loads only the runtime layer — the entry, the 15 load-bearing rules, and your profile (~3,800 chars) — and **skips** the full 14 KB charter and every handbook, because *exists ≠ must be read*.
+> 2. loads only the runtime layer — the entry, the 16 load-bearing rules, and your profile (~3,900 chars) — and **skips** the full 14 KB charter and every handbook, because *exists ≠ must be read*.
 > 3. makes the edit, re-reads the line to confirm, and hands you a three-line receipt:
 >
 > ```text
