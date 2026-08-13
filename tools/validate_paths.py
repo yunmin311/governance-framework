@@ -44,6 +44,19 @@ for pat in ("launchers",):
         for fn in os.listdir(d):
             if fn.endswith(".txt"):
                 ACTIVE.append("%s/%s" % (pat, fn))
+# every shipped skill's SKILL.md + references are active docs too
+# (2026-08-13: the whitelist blind spot let a broken public-repo ref survive 21 green checks)
+skills_root = rp("skills")
+if os.path.isdir(skills_root):
+    for skill in sorted(os.listdir(skills_root)):
+        base = "skills/%s" % skill
+        if os.path.isfile(rp(base, "SKILL.md")) and base + "/SKILL.md" not in ACTIVE:
+            ACTIVE.append(base + "/SKILL.md")
+        refs = rp(base, "references")
+        if os.path.isdir(refs):
+            for fn in sorted(os.listdir(refs)):
+                if fn.endswith(".md"):
+                    ACTIVE.append("%s/references/%s" % (base, fn))
 
 TOP = ("core|runtime|launchers|projects|profiles|templates|skills|registry|"
        "adapters|reviews|docs|tools|scripts|archive|published|releases|migration")

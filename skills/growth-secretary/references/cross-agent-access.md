@@ -28,7 +28,7 @@
 | 其它（网页版/自定义） | 该 agent 的"自定义指令 / 系统提示" | 手动 pull 到本地再喂 |
 
 ## 新机器 / 新 agent 上线三步
-1. `git clone` 私有仓 → `tools/sync_memory.ps1 -Pull` 把记忆拉到本机（详见仓根 `NEW-MACHINE-SETUP.md`）。
+1. `git clone` 私有仓 → `tools/sync_memory.ps1 -Pull` 把记忆拉到本机（详见仓根 `BOOTSTRAP.md`）。
 2. 把上面那段指针贴进这个 agent 的全局指令位。
 3. 干完活 `-Push`，换到别的 agent/机器前先 `-Pull`。
 
