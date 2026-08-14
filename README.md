@@ -32,10 +32,10 @@ A smarter model doesn't fix this. **Pinning the facts into files** does — so a
 
 |  | Without it | With this framework |
 |---|---|---|
-| 🔧 **Fix a typo** | AI swallows the whole 14 KB charter + all your preferences | Classified **QUICK** — reads 3 small files (~3,800 chars) and acts |
+| 🔧 **Fix a typo** | AI swallows the whole 14 KB charter + all your preferences | Classified **QUICK** — reads 3 small files (~5,500 chars) and acts |
 | 💻 **New computer** | "Where's the project? Who can commit? Which file is canonical?" | Method unchanged — you only re-fill *this machine's* facts |
 | 💬 **Many chats at once** | They talk past each other; incidents are unexplainable | One authority order + 4-D status + gates — every conflict is traceable |
-| 📋 **A progress report** | A paragraph of "I understand…" with zero evidence | Three lines: **Changed / Verified / Remaining** |
+| 📋 **A progress report** | A paragraph of "I understand…" with zero evidence | Three lines when files actually changed — **Changed / Verified / Remaining**; plain conversation stays plain |
 | 🔁 **Switch model / account** | memory and preferences reset every time | basic memory + personalization follow you across agents |
 
 ## Under the hood
@@ -115,7 +115,7 @@ python -X utf8 tools/validate_runtime.py       # --- 11 passed, 0 failed ---
 >
 > **AI, running under this framework:**
 > 1. reads `runtime/00-entry.md` and classifies the task **QUICK** — one known file, reversible, no structural change.
-> 2. loads only the runtime layer — the entry, the 16 load-bearing rules, and your profile (~3,900 chars) — and **skips** the full 14 KB charter and every handbook, because *exists ≠ must be read*.
+> 2. loads only the runtime layer — the entry, the 16 load-bearing rules, and your profile (~5,500 chars) — and **skips** the full 14 KB charter and every handbook, because *exists ≠ must be read*.
 > 3. makes the edit, re-reads the line to confirm, and hands you a three-line receipt:
 >
 > ```text

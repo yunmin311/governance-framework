@@ -11,7 +11,7 @@ Everything this framework gives you, in one place — the reference companion to
 - One entry file classifies every task into QUICK / NORMAL / STRUCTURAL / INCIDENT.
 - A router loads only the files a mode needs; the always-loaded layer is capped (<= 8,000 non-whitespace characters).
 - `GOV-*` load-bearing rules, each traceable back to the charter.
-- A three-line receipt (Changed / Verified / Remaining) closes every task.
+- A three-line receipt (Changed / Verified / Remaining) closes every file-changing task; ordinary conversation adds no template, and governance tasks carry at most a one-line run-status header.
 
 ## 3. The governor skill (`skills/global-ai-dialogue-governor`)
 - Picks exactly one mode and states what is off-limits in it.
@@ -23,6 +23,7 @@ Everything this framework gives you, in one place — the reference companion to
 - Four-tier memory (conversation -> atom -> scenario -> persona) as plain markdown.
 - Weekly review: proposes what is worth remembering; you approve before anything enters your profile.
 - Cross-agent access: a portable memory pointer any agent (Claude / Codex / ...) can adopt, with a per-agent placement table.
+- `tools/sync_memory.ps1` ships with the framework: moves the shared memory store between machines and agents (single-writer push-then-pull).
 - Visual records: turn a review or memory into charts.
 - Code-memory sub-mode: activates only on code work.
 

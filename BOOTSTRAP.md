@@ -21,7 +21,7 @@ Send this list, ask each item, and mark `UNKNOWN` if unanswered — never guess:
 3. **Projects to govern** — for each: name + where it lives on this machine (absolute path) + who may commit + its source-of-truth file (`CLAUDE.md` / `AGENTS.md`)
 4. **Network** — any proxy to configure
 5. **Guardrails** — which hard red-lines to mechanize via your agent's settings/hooks (e.g. block `rm -rf`, block `git push --force`, block publishing private material)
-6. **Reports** — how they want progress reported (default: three lines — Changed / Verified / Remaining)
+6. **Reports** — how they want progress reported (default: engineering receipt — Changed / Verified / Remaining — only when files actually changed; natural replies otherwise)
 
 ## Step 3 — apply, item by item
 - What you can do directly: copy `profiles/user/user-profile.template.md` into their profile and fill it from their answers; create a machine-profile instance and project adapters from the templates. **Keep these filled-in instances in the user's own private repo — never push them back to this framework.**

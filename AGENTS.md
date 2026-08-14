@@ -9,7 +9,7 @@
 ## Safety
 
 - Keep governance status `CANDIDATE` until the user explicitly approves the charter itself.
-- Do not modify other repositories under `<项目根路径>` while working here.
+- Do not modify sibling repositories outside this repo's root while working here; the concrete local paths live in this machine's profile under `profiles/machines/instances/`, never in this file (it ships publicly).
 - Do not delete pre-existing files, approved outputs, sources, receipts, or unknown files without explicit user approval.
 - Before creating multiple files, declare `output_root`, file scope, canonical outputs, temporary outputs, and final Review location.
 
