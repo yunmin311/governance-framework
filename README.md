@@ -158,7 +158,7 @@ One concise entry file, references one level deep. That's the whole engine — t
 
 ## It grows with you — the `growth-secretary` skill
 
-A second skill ships alongside the governor: [`growth-secretary`](skills/growth-secretary/SKILL.md). On a weekly cadence (or on request) it reviews how you've been working, **proposes** what's worth remembering about your preferences, clarifies with you, and — only with your approval — settles the stable patterns into your profile. The system gets more personal over time and never learns behind your back.
+A second skill ships alongside the governor: [`growth-secretary`](skills/growth-secretary/SKILL.md). On a weekly or monthly cadence (or on request) it reviews how you've actually been working — hard numbers first: per-repo git counts, session stats, deliverables checked in place — and turns a period into three deliverables: an internal review, an outward-facing work report (plain factual prose, no rhetorical filler), and a visual dashboard. It **proposes** what's worth remembering about your preferences, clarifies with you, and — only with your approval — settles the stable patterns into your profile. The system gets more personal over time and never learns behind your back.
 
 - **Four-tier memory** (conversation → atom → scenario → persona) as plain markdown files.
 - **Your memory follows you** — kept in a neutral, portable place, so switching model or account doesn't wipe it.

@@ -21,7 +21,9 @@ Everything this framework gives you, in one place — the reference companion to
 
 ## 4. The growth-secretary skill (`skills/growth-secretary`)
 - Four-tier memory (conversation -> atom -> scenario -> persona) as plain markdown.
-- Weekly review: proposes what is worth remembering; you approve before anything enters your profile.
+- Period review (week / month / custom range): evidence first — per-repo git counts, session stats, deliverables verified in place; memory is an index, never the source of current state.
+- Three delivery forms: internal review, outward-facing work report (factual prose, anti-rhetoric rules, multi-round drafting), and a visual dashboard following the approved visual-records baseline.
+- Proposes what is worth remembering; you approve before anything enters your profile.
 - Cross-agent access: a portable memory pointer any agent (Claude / Codex / ...) can adopt, with a per-agent placement table.
 - `tools/sync_memory.ps1` ships with the framework: moves the shared memory store between machines and agents (single-writer push-then-pull).
 - Visual records: turn a review or memory into charts.
