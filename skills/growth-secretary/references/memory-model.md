@@ -9,27 +9,31 @@
 - **L3 人格**:长期稳定的偏好与模式。让任何 agent 快速进入上下文。= 画像层(可移植)。
 
 ## 原子档 frontmatter schema(一切机制的载体)
+**新字段一律并入现有 `metadata:`(与 `type`/`node_type` 同级),不另起顶层结构;`type` 沿用现有类别枚举;`#标签` 与 `[[链接]]` 沿用放正文,不进 frontmatter。**
 ```yaml
 ---
-id: example-preference          # slug,与文件名一致,稳定不变
-type: fact                      # fact | preference | constraint | event | decision
-tags: [...]                     # 关键词召回
-links: [[相关档]]               # 关系召回
-valid_at: '2026-01-01'          # 成立起点
-invalid_at: null                # 被推翻时填日期;非 null = 已失效
-superseded_by: null             # 被哪条新档取代
-supersedes: null                # 本档取代了哪条旧档
-source: user-said               # project-file|git|test|spec|adapter|registry|conversation|user-said
-evidence: '一句可核对的来源'
-verification: VERIFIED          # VERIFIED | UNVERIFIED | UNKNOWN
-confidence: high                # high | med | low(可选)
-status: active                  # active | archived(archived 不物理删、召回默认不注入)
-weight: 3                       # 1–5,承重度:硬红线=5、稳定偏好=3–4、一次性=1–2
-last_recalled_at: '2026-01-01'  # 每次被召回时更新(驱动遗忘)
-recall_count: 0
+name: example-slug              # 与文件名一致(沿用现有)
+description: 一句话,召回相关性判断用(沿用现有)
+metadata:
+  node_type: memory             # 沿用
+  type: feedback                # user | feedback | project | reference(类别,沿用)
+  originSessionId: <uuid>       # 沿用
+  # —— 新增·时效与溯源 ——
+  source: user-said             # project-file|git|test|spec|adapter|registry|conversation|user-said
+  verification: VERIFIED        # VERIFIED | UNVERIFIED | UNKNOWN
+  valid_at: '2026-01-01'        # 成立起点
+  invalid_at: null              # 被推翻时填日期;非 null = 已失效
+  superseded_by: null           # 被哪条新档取代([[新档]])
+  supersedes: null              # 本档取代了哪条旧档
+  # —— 新增·生命周期与召回 ——
+  status: active                # active | archived(archived 不物理删、召回默认不注入)
+  weight: 3                     # 1–5:硬红线=5、稳定偏好=3–4、一次性=1–2
+  last_recalled_at: '2026-01-01'# 每次被召回时更新(驱动遗忘)
+  recall_count: 0
 ---
+正文:**Why:** / **How to apply:** + #标签 + [[链接]](沿用现有约定)
 ```
-存量档不必一次全填:新档用全套,老档"碰到即回填"(见迁移)。`MEMORY.md` 索引行建议带 `· w3 · active`,扫索引即见权重与状态。
+存量档不必一次全填:新档用全套,老档"碰到即回填"(见迁移);可选一次性只补 `status: active`。`MEMORY.md` 索引行建议带 `· w3 · active`,扫索引即见权重与状态。
 
 ## 八机制(存—取—忘闭环)
 
