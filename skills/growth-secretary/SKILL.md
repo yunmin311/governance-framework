@@ -25,6 +25,7 @@ description: 用于周期性复盘(周/月/自定义区间)、把一段时间的
 2. **会话统计**:AI 对话记录目录(如 `~/.claude/projects/`)按项目数会话文件与体量。
 3. **交付物清点**:发布的版本、公开的仓、上线的页面、建成的 skill——逐个到实地确认状态。
 4. **记忆只当索引**:记忆和旧盘点用来找线索,**不当现状**;状态类事实(某工具"做完没")必须实测或问用户,拿旧记忆当现状是本 skill 犯过的真实错误。
+5. **token 会计(2026-08-16 加)**:跑 `tools\token_stats.ps1 -Since <区间起点>`(从 `~/.claude/projects/*/*.jsonl` 的 `message.usage` 聚合 output/cache_create/input/cache_read,按会话 + 按天),进 dashboard 的 token 面板 + 逐日热力图(见 `visual-records.md`)。**这套体系要优化 token;E 机额度紧(Codex Plus + DeepSeek 替补),调度与复盘都要盯 token。**
 
 报告里写明口径(哪天取的数、怎么算的),标注哪些是实测、哪些是用户口述未核。
 

@@ -27,6 +27,7 @@
 - **图表纪律**（dataviz）：单色蓝阶、细标记、4px 圆端、悬停提示层、图下有表、一轴不双轴；
 - **动效（要做足）**：分区渐显（IntersectionObserver）+ 数字滚动 + 条形阶梯生长 + 曲线 stroke-dash 描画 + 时间轴点阵延迟弹出 + 卡片悬停微浮；缓动统一；**全部守 `prefers-reduced-motion`**（减少动态 = 直接终态）；
 - **验收（双截图）**：headless 浏览器普通截一张（抓到动画中途帧 = 动效在跑），再加 `--force-prefers-reduced-motion` 截终态一张（验数据与版式）；两张都要肉眼看；
+- **token 面板 + 逐日热力图（2026-08-16 加，用户要求）**：dashboard 要含本区间 token 用量。数字墙加一组 token 数——**output / cache_create / input**（这三是"新花的贵 token"、优化重点）+ **cache_read** 单独列（每轮重读缓存、量极大但单价最低）；再加一张 **token 逐日热力图**（GitHub 式日历格、青瓷蓝阶按当日 output 分档，与活动热力图同体系并排）；可加"按会话 output 小倍数条"看哪条对话最费。**数据源**：跑 `tools\token_stats.ps1 -Since <区间起点> -Json`（从 `~/.claude/projects/*/*.jsonl` 的 `message.usage` 聚合，输出 perDay/perSession/totals），把它喂进图。**E 机额度紧（Codex Plus + DeepSeek 替补），token 是真实约束，复盘要让它可见。**
 - **交付**：单文件 HTML，放用户指定的桌面交付夹，给绝对路径。
 
 ## 怎么渲染：用 lieflat-charts
