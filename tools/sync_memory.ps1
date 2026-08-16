@@ -36,6 +36,21 @@ if ($Push) {
     Write-Output "memory unchanged since last sync -- nothing to push."
     return
   }
+  # single-writer pen check (opt-in): don't commit/push unless THIS machine holds the pen.
+  # Enforces only when both OWNER (repo root) and .gov-machine (this machine) exist;
+  # otherwise (public users, or gate not set up) it's a no-op -- backward compatible.
+  # Fail-safe: memory is mirrored locally but NOT committed, so a non-pen machine can't
+  # create a divergent auto-commit while the other machine holds the pen.
+  $ownerFile = Join-Path $repoRoot 'OWNER'
+  $govFile   = Join-Path $repoRoot '.gov-machine'
+  if ((Test-Path $ownerFile) -and (Test-Path $govFile)) {
+    $penOwner = ((Get-Content $ownerFile -TotalCount 1) -replace '^OWNER:\s*','').Trim()
+    $penMe    = (Get-Content $govFile   -TotalCount 1).Trim()
+    if ($penOwner -and $penMe -and ($penOwner -ne $penMe)) {
+      Write-Output "single-writer: pen held by [$penOwner], this machine is [$penMe] -- memory mirrored locally, NOT committed/pushed (hand off OWNER to sync)."
+      return
+    }
+  }
   $n = (Get-ChildItem $repoMem -File).Count
   git add memory
   git commit -m "memory sync: snapshot from $ProjectHash machine"
