@@ -16,6 +16,7 @@ Any non-Claude agent (Codex or otherwise) working in this repository: this file 
 - Before building anything new, search for an existing solution and say what you found and why you reuse / adapt / build (GOV-016 Reuse-First).
 - Current project facts come from: project files / Git / tests > approved Spec or baseline > project adapter > registry > memory / old chats / handoffs — the last tier only locates evidence, it never alone proves current state (GOV-003).
 - On your own drift: stop, locate it, repair the current facts and boundaries first; do not default to writing memories or new rules over a single mistake (GOV-013).
+- **Be token-frugal — you may be on a small quota.** Load only what the task needs (a file existing is not a reason to read it), do not re-read large files or repeat a search whose result you already have, and keep replies concise: result first, no restating the task or narrating what you are about to do. Send trivial, deterministic work to the cheapest capable model. Exhaustive loading or exploring is a cost, not thoroughness.
 
 ## Canonical sources
 
