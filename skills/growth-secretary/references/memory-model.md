@@ -80,4 +80,4 @@ metadata:
 - 灾难性覆盖/只升不降 → 失效不删 + 承重永不自动 archive + 召回反馈驱动退役。
 
 ## 与将来检索层的组合
-上面 frontmatter 正好是将来可选 T1 检索层(SQLite FTS5 + 薄 MCP)的过滤维度(`status=active`、`invalid_at IS NULL`、`weight` 排序、`type`/`source`/`verification` 过滤)。索引是从 frontmatter 派生的可弃缓存,frontmatter 才是正本 → 机制层与检索层解耦、可分别演进;检索层是否建按信号触发,不在本文件强制。
+上面 frontmatter 正好是将来可选 T1 检索层(SQLite FTS5 + 薄 MCP)的过滤维度(`status=active`、`invalid_at IS NULL`、`weight` 排序、`type`/`source`/`verification` 过滤)。索引是从 frontmatter 派生的可弃缓存,frontmatter 才是正本 → 机制层与检索层解耦、可分别演进;检索层是否建按信号触发,不在本文件强制。召回信号除关键词/向量外,**`[[链接]]` 邻域可当第三条**(链接图:顺双链扩,比纯向量更可审计)——现有约定天然支持,建索引时一并利用。
