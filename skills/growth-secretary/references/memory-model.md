@@ -37,7 +37,7 @@ metadata:
 
 ## 八机制(存—取—忘闭环)
 
-**1 · atom 写入四态(ADD/UPDATE/DELETE/NOOP)**——写任何一条前,按去重键 `(type, tags/链接邻域)` 先查 `MEMORY.md`:没有=ADD;有且同一事实有实质变化=UPDATE;过时=DELETE→archive(不物理删);无变化=NOOP(只刷 `last_recalled_at`)。**别自由摘要**(实测丢 ~20% 事实)。同主题不同侧面 → ADD 不硬塞。
+**1 · atom 写入四态(ADD/UPDATE/DELETE/NOOP)**——写任何一条前,按去重键 `(type, tags/链接邻域)` 先查 `MEMORY.md`:没有=ADD;有且同一事实有实质变化=UPDATE;过时=DELETE→archive(不物理删);无变化=NOOP(只刷 `last_recalled_at`)。**别自由摘要**(实测丢 ~20% 事实)。同主题不同侧面 → ADD 不硬塞。**UPDATE 优先用追加式 delta**(标日期/来源、往档里加一段),**禁整段重写覆盖已有内容**——整段重写会丢细节(brevity bias)、反复重写侵蚀信息(context collapse);整段重写只用于**修漂移**、且须核对无信息丢失(如索引瘦身要逐条对齐)。
 
 **2 · 双时间失效,不物理删**——事实被推翻:旧档 `invalid_at`+`superseded_by`+`status:archived`+正文顶注"已被 X 取代";新档 `valid_at`+`supersedes`。召回默认只给现行,历史可下探。可审计的"改主意"。
 
