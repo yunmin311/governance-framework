@@ -28,8 +28,34 @@ if ($Push) {
   if (-not (Test-Path $liveMem)) { throw "live memory not found: $liveMem" }
   New-Item -ItemType Directory -Force -Path $repoMem | Out-Null
   # /MIR: make repo\memory an exact mirror of live (so deletions propagate too)
-  robocopy $liveMem $repoMem /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
+  # /XD _roots: never let the primary mirror delete the per-root archives below.
+  robocopy $liveMem $repoMem /MIR /XD (Join-Path $repoMem '_roots') /NFL /NDL /NJH /NJS /NP | Out-Null
   Assert-Robocopy
+
+  # ---- per-root archive (added 2026-08-19) ----------------------------------
+  # Claude Code keys auto-memory by working directory, so a machine ends up with
+  # SEVERAL memory stores, one per project root. On 2026-08-19 this machine had 7
+  # of them holding 127 files, while only the primary ('D--', 31 files) was ever
+  # synced -- 96 files had no backup at all and Codex could not see them.
+  # They are NOT merged into the flat primary store: the roots overlap by exactly
+  # one filename (MEMORY.md, each root's own index), so a flat merge would clobber
+  # indexes. Archive each root separately; merging is a content decision for later.
+  $projRoot = Join-Path $env:USERPROFILE '.claude\projects'
+  $archived = 0
+  if (Test-Path $projRoot) {
+    foreach ($d in (Get-ChildItem $projRoot -Directory)) {
+      if ($d.Name -eq $ProjectHash) { continue }          # primary already mirrored flat
+      $m = Join-Path $d.FullName 'memory'
+      if (-not (Test-Path $m)) { continue }
+      if (-not (Get-ChildItem $m -Filter *.md -ErrorAction SilentlyContinue)) { continue }
+      $dest = Join-Path $repoMem "_roots\$($d.Name)"
+      New-Item -ItemType Directory -Force -Path $dest | Out-Null
+      robocopy $m $dest /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
+      Assert-Robocopy
+      $archived++
+    }
+  }
+
   Set-Location $repoRoot
   # change-guard: if the mirror didn't actually change, do nothing (keeps auto-push a quiet no-op)
   if (-not (git status --porcelain -- memory)) {
@@ -52,19 +78,40 @@ if ($Push) {
     }
   }
   $n = (Get-ChildItem $repoMem -File).Count
+  $t = (Get-ChildItem $repoMem -Recurse -File -Filter *.md).Count
   git add memory
-  git commit -m "memory sync: snapshot from $ProjectHash machine"
+  git commit -m "memory sync: snapshot from $ProjectHash machine (+$archived archived roots)"
   git push
-  Write-Output "done: $n memory files synced to the private repo and pushed."
+  Write-Output "done: primary=$n files (flat), total incl. _roots archive=$t md files, $archived extra roots archived. Pushed."
 }
 
 if ($Pull) {
   if (-not (Test-Path $repoMem)) { throw "repo\memory not found (did you 'git pull' first?): $repoMem" }
   New-Item -ItemType Directory -Force -Path $liveMem | Out-Null
   # /E: copy in (incl. subdirs), overwrite; NO delete, so a stale repo can't wipe newer local memory
-  robocopy $repoMem $liveMem /E /NFL /NDL /NJH /NJS /NP | Out-Null
+  # /XD _roots: the per-root archive is restored separately below, it must not land inside the primary store
+  robocopy $repoMem $liveMem /E /XD (Join-Path $repoMem '_roots') /NFL /NDL /NJH /NJS /NP | Out-Null
   Assert-Robocopy
   $n = (Get-ChildItem $liveMem -File).Count
-  Write-Output "pulled $n memory files -> $liveMem"
+  Write-Output "pulled $n memory files (primary) -> $liveMem"
+
+  # ---- restore the per-root archives too (added 2026-08-19) -----------------
+  # Without this, -Pull silently restores only the primary store and every other
+  # working directory comes up on the new machine with no memory at all -- which
+  # is exactly the gap that left 96 files unbacked in the first place.
+  $rootsDir = Join-Path $repoMem '_roots'
+  $restored = 0
+  if (Test-Path $rootsDir) {
+    foreach ($d in (Get-ChildItem $rootsDir -Directory)) {
+      $dest = Join-Path $env:USERPROFILE ".claude\projects\$($d.Name)\memory"
+      New-Item -ItemType Directory -Force -Path $dest | Out-Null
+      robocopy $d.FullName $dest /E /NFL /NDL /NJH /NJS /NP | Out-Null
+      Assert-Robocopy
+      $restored++
+      Write-Output "  restored root '$($d.Name)' -> $dest"
+    }
+  }
+  Write-Output "restored $restored additional working-directory memory stores."
+  Write-Output "NOTE: project-root folder names are derived from the working directory (e.g. 'D--' for D:\). If your projects live on different paths on this machine, the restored folder names will not match -- rename them to the new machine's roots before they take effect."
   Write-Output "now restart Claude Code (or open a new conversation) so it reloads MEMORY.md."
 }

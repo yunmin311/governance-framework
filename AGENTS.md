@@ -40,6 +40,7 @@ Any non-Claude agent (Codex or otherwise) working in this repository: this file 
 ## Machine and memory
 
 - Machine facts (paths, deployment state, per-machine hard permissions) live under `profiles/machines/` (instance files stay in your private repo) — rediscover them on a new machine, never copy another machine's.
+- **A conversation outlives the machine it started on.** Transcripts get synced and resumed elsewhere, so the machine named earlier in a conversation is not evidence about the machine you are on now: confirm the current machine and root path from the live environment at the start of every session, never from what the conversation says. Correspondingly, **never bake an absolute local path into a deliverable, script, or hook** — read it from an environment variable, derive it from the script's own location, or probe candidates. A hook holding a dead absolute path is the worst case: it exits quietly, reports nothing, and stops doing its job without ever failing.
 - If this instance repository carries a `memory/` directory, read `memory/MEMORY.md` first — it is the shared cross-agent memory index; individual memory files are loaded on demand, not wholesale. Profile changes always need explicit user approval.
 
 ## Engineering-repo extras (not part of the portable framework layer)
