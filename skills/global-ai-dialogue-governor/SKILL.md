@@ -7,13 +7,21 @@ description: Use when coordinating multiple AI projects or dialogues; moving gov
 
 Treat the user as sole final decision-maker. Govern sources, roles, state, evidence, boundaries, and handoffs; do not absorb every specialist role.
 
-## 1. Select exactly one mode
+## 1. Classify the task, then set write capability
 
-- `DISCOVERY-READ-ONLY`: new device, missing machine facts, first inventory, or unresolved governance root.
-- `NORMAL-GOVERNANCE`: canonical sources and current machine facts are verified enough for the task.
-- `INCIDENT-READ-ONLY`: conflicting dialogue reports, forgotten frozen work, wrong paths, boundary violations, or report-risking inconsistency.
+These are two independent axes. Do not invent a second mode system on top of the first.
 
-State the mode and prohibited actions before proceeding. Discovery and incident modes do not modify projects, Git, hard permissions, or canonical sources.
+**Task mode — exactly one, and only these four** (classified by `runtime/00-entry.md`, loaded per `runtime/router.yaml`):
+
+`QUICK` · `NORMAL` · `STRUCTURAL` · `INCIDENT`
+
+**Write capability — orthogonal to the mode**, decided by how well the current facts are established and whether the action crosses a boundary:
+
+- `READ-ONLY`: governance root unresolved, machine facts missing, first inventory on a new device, sources in conflict, or a boundary may have been crossed. Do not modify projects, Git, hard permissions, or canonical sources.
+- `WRITE`: canonical sources and current machine facts are verified enough for this task.
+- `APPROVAL_REQUIRED`: the action is irreversible, outward-facing, or costs money — deletion, force-push, bulk moves, publishing, permission changes.
+
+So "new machine, nothing verified yet" is `NORMAL` + `READ-ONLY`, not a mode of its own; a live conflict is `INCIDENT` + `READ-ONLY`. State the mode and the write capability before proceeding.
 
 ## 2. Resolve and load the v2.2 layers
 
@@ -39,7 +47,7 @@ Use the stable `project_id`, current machine binding, and matching project adapt
 
 Keep project admission states distinct: `DISCOVERED` means found, `BOUND` means this machine has a candidate path, `VERIFIED` means the adapter and canonical source match, and `GOVERNED` means the user allowed this project to use the system. Only `GOVERNED` projects enter normal project writes.
 
-Never translate a project constitution into a second independently maintained platform copy. If `project_id`, its machine binding, adapter, or canonical source is missing, inaccessible, changed without verification, or conflicting, enter `DISCOVERY-READ-ONLY`; never substitute another project adapter.
+Never translate a project constitution into a second independently maintained platform copy. If `project_id`, its machine binding, adapter, or canonical source is missing, inaccessible, changed without verification, or conflicting, drop to `READ-ONLY` write capability until it is resolved; never substitute another project adapter.
 
 ## 4. Establish authority, state, and evidence
 
@@ -111,7 +119,7 @@ Read `references/hard-permissions.md` before creating or claiming Claude Hook, C
 
 ## 11. Handle incidents
 
-Switch to `INCIDENT-READ-ONLY` when sources conflict, boundaries are crossed, private content may be exposed, or multiple dialogues forget established work.
+Switch to `INCIDENT` mode with `READ-ONLY` write capability when sources conflict, boundaries are crossed, private content may be exposed, or multiple dialogues forget established work.
 
 Stop promotion and writes; mark new suspect outputs `QUARANTINED`; reduce write surfaces; resolve current paths; find the last trusted canonical source; compare affected artifacts; propose one minimal recovery chain; validate a small restoration; obtain the correct gate approval before resuming.
 

@@ -113,7 +113,7 @@ modes:
       - 完整开工声明卡
       - 分层加载证据（实际读到的层与版本）
       - 最终 Review
-    git_behavior: 结构改动走门禁；首次接入先 DISCOVERY-READ-ONLY，用户批准盘点后才写
+    git_behavior: 结构改动走门禁；首次接入先降到 READ-ONLY 写入能力，用户批准盘点后才写
     escalation_conditions:
       - 发现正本冲突 / 越权 / 私密风险 → INCIDENT
 

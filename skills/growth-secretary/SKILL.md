@@ -25,7 +25,22 @@ description: 用于周期性复盘(周/月/自定义区间)、把一段时间的
 2. **会话统计**:AI 对话记录目录(如 `~/.claude/projects/`)按项目数会话文件与体量。
 3. **交付物清点**:发布的版本、公开的仓、上线的页面、建成的 skill——逐个到实地确认状态。
 4. **记忆只当索引**:记忆和旧盘点用来找线索,**不当现状**;状态类事实(某工具"做完没")必须实测或问用户,拿旧记忆当现状是本 skill 犯过的真实错误。
-5. **token 会计(2026-08-16 加)**:跑 `tools\token_stats.ps1 -Since <区间起点>`(从 `~/.claude/projects/*/*.jsonl` 的 `message.usage` 聚合 output/cache_create/input/cache_read,按会话 + 按天),进 dashboard 的 token 面板 + 逐日热力图(见 `visual-records.md`)。**这套体系要优化 token;E 机额度紧(Codex Plus + DeepSeek 替补),调度与复盘都要盯 token。**
+5. **用量会计(2026-08-16 提出,2026-08-19 建成脚本)**:两条命令拿到全部真值,不估算、不联网、不调账号接口——
+
+   ```powershell
+   node ~\.claude\skills\growth-secretary\tools\usage_stats.mjs --since 2026-08-01 --out stats.json
+   node ~\.claude\skills\growth-secretary\tools\render_usage.mjs --data stats.json --out 看板.html --title "..."
+   ```
+
+   `usage_stats.mjs` 递归扫 `~/.claude/projects/**/*.jsonl`(**必须递归**:`<项目>/<会话uuid>/agent-*.jsonl` 是子 agent 记录,只扫一层会漏掉它们),聚合六个维度:
+   - **token**:output / cache_create / input(= 新花的贵 token)+ cache_read(单独列)+ 缓存命中率,按天 / 按模型 / 按项目 / 按会话;
+   - **模型**:各模型分别吐了多少、跑了多少次请求;
+   - **主线 vs 子 agent**:`isSidechain` 区分,看活有没有真分出去;
+   - **MCP / 插件**:`mcp__plugin_<插件>__*` 归插件、`mcp__<server>__*` 归独立 MCP 服务;
+   - **skill**:`Skill` 工具的 `input.skill`,数每个 skill 被叫了几次;
+   - **内置工具**:Read/Edit/Bash/… 各自次数。
+
+   `render_usage.mjs` 把 JSON 渲成单文件 HTML 看板(青瓷蓝基准线,见 `visual-records.md`)。**读数要点**:cache_create 通常是 output 的数倍,说明省 token 的主战场是**砍常驻上下文**(全局规则、skill 描述、MCP 工具表、长文件),不是让模型少说话;长尾 skill 与零调用的 MCP 是纯常驻开销,该摘。**E 机额度紧(Codex Plus + DeepSeek 替补),调度与复盘都要盯这组数。**
 
 报告里写明口径(哪天取的数、怎么算的),标注哪些是实测、哪些是用户口述未核。
 

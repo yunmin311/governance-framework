@@ -27,7 +27,18 @@
 - **图表纪律**（dataviz）：单色蓝阶、细标记、4px 圆端、悬停提示层、图下有表、一轴不双轴；
 - **动效（要做足）**：分区渐显（IntersectionObserver）+ 数字滚动 + 条形阶梯生长 + 曲线 stroke-dash 描画 + 时间轴点阵延迟弹出 + 卡片悬停微浮；缓动统一；**全部守 `prefers-reduced-motion`**（减少动态 = 直接终态）；
 - **验收（双截图）**：headless 浏览器普通截一张（抓到动画中途帧 = 动效在跑），再加 `--force-prefers-reduced-motion` 截终态一张（验数据与版式）；两张都要肉眼看；
-- **token 面板 + 逐日热力图（2026-08-16 加，用户要求）**：dashboard 要含本区间 token 用量。数字墙加一组 token 数——**output / cache_create / input**（这三是"新花的贵 token"、优化重点）+ **cache_read** 单独列（每轮重读缓存、量极大但单价最低）；再加一张 **token 逐日热力图**（GitHub 式日历格、青瓷蓝阶按当日 output 分档，与活动热力图同体系并排）；可加"按会话 output 小倍数条"看哪条对话最费。**数据源**：跑 `tools\token_stats.ps1 -Since <区间起点> -Json`（从 `~/.claude/projects/*/*.jsonl` 的 `message.usage` 聚合，输出 perDay/perSession/totals），把它喂进图。**E 机额度紧（Codex Plus + DeepSeek 替补），token 是真实约束，复盘要让它可见。**
+- **用量看板（2026-08-16 提出，2026-08-19 建成并定为本层第二条基准线）**：dashboard 要含本区间的全部用量真值，**脚本已存在，别再手搓**：
+
+  ```powershell
+  node ~\.claude\skills\growth-secretary\tools\usage_stats.mjs --since <区间起点> --out stats.json
+  node ~\.claude\skills\growth-secretary\tools\render_usage.mjs --data stats.json --out 看板.html --title "..."
+  ```
+
+  版式（已跑通、用户看过）：数字墙八格 4×2（**新花 token** = output+cache_create+input 放首格并高亮，**cache_read** 单独一格并用浅底区分，两者不相加）→ 逐日热力图（GitHub 式日历格、按当日 output 分四档蓝阶、格子阶梯弹入、附图例与峰值）→ 每日新花 token 面积图（stroke-dash 描画）→ 模型 / 工作目录两栏小倍数条 → 主线 vs 子 agent 分流条（**窄段不塞文字，另起图例行**，否则标签会被裁掉）→ 工具 / 插件(MCP) / 独立 MCP / skill 四组分布条 → 读数文字 → 可展开原始数据表。
+
+  三条已踩过的坑：①数字墙用**固定 4 列**，`auto-fit` 会在 8 个格子时留一大块空灰；②纸纹用**程序化 SVG feTurbulence**，不内嵌设计库那张 339KB jpg——每份报告 base64 后多 450KB，进 git 越堆越肥；③脚本必须**递归**扫会话目录，`<项目>/<会话uuid>/agent-*.jsonl` 是子 agent 记录，只扫一层会漏掉一大半文件。
+
+  **读数纪律**：cache_create 常是 output 的数倍，说明省 token 的主战场是**砍常驻上下文**（全局规则、skill 描述、MCP 工具表、长文件），不是让模型少说话；长尾 skill 和零调用的 MCP 是纯常驻开销，复盘要点名。**E 机额度紧（Codex Plus + DeepSeek 替补），token 是真实约束，复盘要让它可见。**
 - **交付**：单文件 HTML，放用户指定的桌面交付夹，给绝对路径。
 
 ## 怎么渲染：用 lieflat-charts
