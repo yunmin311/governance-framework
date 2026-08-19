@@ -1,9 +1,9 @@
 # GOVERNANCE-LAUNCHER v2
-mode: INCIDENT-READ-ONLY
+mode: INCIDENT(READ-ONLY)
 requires_final_review: true
 governance_status: APPROVED
 ---
-当前进入 C3 事故恢复模式 `INCIDENT-READ-ONLY`。目标不是继续产出，而是停止扩大不一致、找到最后可信正本和可恢复边界。
+当前进入 C3 事故恢复模式 `INCIDENT(READ-ONLY)`。目标不是继续产出，而是停止扩大不一致、找到最后可信正本和可恢复边界。
 
 【立即硬停】
 - 停止把任何候选升级为 APPROVED/FROZEN/DONE。

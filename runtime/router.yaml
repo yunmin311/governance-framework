@@ -7,6 +7,21 @@ purpose: 普通任务的最小加载路由。入口先读 runtime/00-entry.md，
 default_governance_files_max: 5
 default_governance_characters_max: 8000
 
+# Overlay 解析:下面 default_files 里写的路径是**逻辑名**,不是死路径。
+# 解析顺序 = Personal Overlay 优先 → Kernel 兜底。个性化只改 Overlay,永远不改 Kernel 里的文件。
+# 完整槽位表见 docs/分层导航-复用层与本机层.md(Personal Overlay Contract)。
+overlay:
+  resolution_order:
+    - $GOV_OVERLAY 指向的目录
+    - Kernel 同级目录中含 overlay.yaml 的兄弟目录
+    - 都没有 → 只用 Kernel 模板/默认值,并在开工声明里写明 "running on kernel defaults, no overlay"
+  overridable:
+    runtime/02-user-runtime-profile.md: Overlay 的同名文件全胜;Kernel 里那份只是形状模板
+    profiles/user/: Overlay 的用户画像实例覆盖 Kernel 模板
+    profiles/machines/: 机器实例只存在于 Overlay
+    projects/instances/: 项目绑定只存在于 Overlay
+    skills/: Overlay 的同名 skill 覆盖 Kernel 同名 skill
+
 # QUICK/NORMAL 默认绝不加载这些（存在≠要读）
 forbidden_default_paths_global:
   - archive/
@@ -80,7 +95,7 @@ modes:
     required_output:
       - 仅当实际修改了文件/代码时：Changed / Verified / Remaining 三行工程回执
       - 未改文件的回复：自然对话风格，不套固定模板
-    git_behavior: 按项目 adapter 的 ordinary_commit_owner / push_owner；只暂存显式路径；子代理与无权角色不碰 Git
+    git_behavior: 按项目 adapter 的 ordinary_commit_owner / push_owner；只暂存显式路径；一个可写面（index/worktree/分支）同时只一个写者；未分到独立写面的角色不写 Git
     escalation_conditions:
       - 需要机器发现资料或跨项目影响 → STRUCTURAL
       - 改数据结构 / 公开发布

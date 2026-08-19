@@ -23,7 +23,7 @@ project_bindings:
     verification: VERIFIED
 ```
 
-不得把家里电脑、公司电脑或其他设备的盘符写入 adapter。无法匹配时保持 `DISCOVERY-READ-ONLY`，列出候选路径和缺失证据，不得复用另一个项目的实例补空。
+不得把家里电脑、公司电脑或其他设备的盘符写入 adapter。无法匹配时保持 `READ-ONLY`，列出候选路径和缺失证据，不得复用另一个项目的实例补空。
 
 ## 新项目怎么加入
 

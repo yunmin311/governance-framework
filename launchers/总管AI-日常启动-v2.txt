@@ -31,7 +31,7 @@ governance_status: APPROVED
 【STRUCTURAL / INCIDENT · 才走完整治理】
 - 只有这两档才按分层加载完整来源：核 → 用户 Profile → 机器 Profile → project_bindings[project_id] → projects/instances/<project_id>.adapter.yaml → 项目唯一正本 → 角色/Spec/基线/Skill。
 - 输出完整开工声明（templates/开工声明卡-v2.md）：项目、角色、已读正本、read/create/modify/forbidden_scope、共享写入面、output_root、正本/临时产物、Git 所有者、Approver、风险、验证、最终 Review 位置。
-- 新电脑或换机先 DISCOVERY-READ-ONLY，用户批准盘点后才写；不可达或版本冲突来源标 UNKNOWN 并暂停依赖它的写入。
+- 新电脑或换机先 READ-ONLY，用户批准盘点后才写；不可达或版本冲突来源标 UNKNOWN 并暂停依赖它的写入。
 - INCIDENT 见 launchers/事故恢复-只读-v2.txt：停扩展、只读取证、找最后可信正本、交对应 Approver。
 
 【交接与 Git（GOV-010）】

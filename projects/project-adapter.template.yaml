@@ -38,4 +38,4 @@ loading_contract:
   - compare the local Git remote and project rule path with canonical_source
   - read the project canonical rule file before dependent writes
   - declare the active role and exact ownership boundaries
-  - keep inaccessible or changed sources DISCOVERY-READ-ONLY
+  - keep inaccessible or changed sources READ-ONLY

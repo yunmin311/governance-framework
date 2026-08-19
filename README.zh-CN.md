@@ -148,7 +148,7 @@ python -X utf8 tools/validate_runtime.py       # --- 11 passed, 0 failed ---
 
 框架本体就是一个 skill:[`skills/global-ai-dialogue-governor`](skills/global-ai-dialogue-governor/SKILL.md)。在 Claude、Codex 或任意 agent 里装上它,或者直接贴启动器;之后任何 AI 在动你的东西之前,都会先当一次总管:
 
-- 先选定一个模式(`DISCOVERY-READ-ONLY` / `NORMAL-GOVERNANCE` / `INCIDENT-READ-ONLY`),并说明这个模式里什么不许碰;
+- 先把任务归到四个模式之一(`QUICK` / `NORMAL` / `STRUCTURAL` / `INCIDENT`),再单独定写入能力(`READ-ONLY` / `WRITE` / `APPROVAL_REQUIRED`)——两条是独立的轴;并说明这一步里什么不许碰;
 - 只加载任务需要的层,日常活先走 `runtime/`,不把整个库倒进对话;
 - 把四维状态分开记(生命周期、执行、验证、事故),不把 `UNKNOWN`、`DRAFT` 当成品;
 - 动手前先声明角色、地盘、正本来源和 Git 路径,收尾给一份「读了什么、改了什么、还剩什么」的回执;

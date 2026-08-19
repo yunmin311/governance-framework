@@ -8,7 +8,7 @@ Use this reference when a dialogue hallucinates, bypasses instructions, forgets 
 |---|---|---|
 | One bounded defect; sources and baseline remain known | `CORRECT-IN-PLACE` | Repair only the named scope and prove no collateral change |
 | Cross-module drift, tail-quality decay, or repeated failed local fixes | `BASELINE-RESET` | Stop expansion, reload sources, classify every target, rebuild noncompliant areas |
-| Fabricated access, authority bypass, false approval, or canonical overwrite risk | `INCIDENT-READ-ONLY` | Quarantine, stop writes, recover the last trusted chain, request user approval |
+| Fabricated access, authority bypass, false approval, or canonical overwrite risk | `INCIDENT(READ-ONLY)` | Quarantine, stop writes, recover the last trusted chain, request user approval |
 
 When uncertain, request a read-only diagnostic: current role, actual sources read, baseline/version, files touched, rendered scope, unknowns, differences, and recommended level.
 

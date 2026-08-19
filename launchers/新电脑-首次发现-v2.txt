@@ -1,5 +1,5 @@
 # GOVERNANCE-LAUNCHER v2
-mode: DISCOVERY-READ-ONLY
+mode: READ-ONLY
 requires_final_review: true
 governance_status: APPROVED
 ---

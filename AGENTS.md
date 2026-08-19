@@ -28,7 +28,9 @@ Any non-Claude agent (Codex or otherwise) working in this repository: this file 
 
 ## Git and safety
 
-- Stage **explicit paths only** (never `git add -A` / `git add .`); one writer per repository at a time — cross-machine coordination is single-writer push-then-pull through the remote, never simultaneous edits.
+- Stage **explicit paths only** (never `git add -A` / `git add .`).
+- **One writer per mutable surface**, not per repository. A surface is a working tree, its index, or a branch. Separate worktrees are separate surfaces and may be worked in parallel; the shared index, the integration branch, `main`, and any release surface are serialized. Cross-machine coordination is still single-writer push-then-pull through the remote — two machines editing the same branch at once is the same surface, not two.
+- The rule is about surfaces, not job titles: **an agent that has not been given its own writable surface does not write Git.** Do not phrase this as "subagents can't use Git" — a subagent with its own worktree may; a main-thread agent sharing someone else's index may not.
 - No history rewrite and no force-push without the user present and approving.
 - Run the three validators before any push and keep them green:
   `python -X utf8 tools/validate_runtime.py` · `tools/validate_paths.py` · `tools/validate_release.py`

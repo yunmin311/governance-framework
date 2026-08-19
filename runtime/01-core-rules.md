@@ -66,10 +66,10 @@
 - canonical_source: core/01 §4
 
 ### GOV-010 · Git 最低规则
-- scope: 共享 index / 工作树
+- scope: 每个可写面（index / worktree / 分支）
 - trigger: 任何 Git 写
-- required_action: 只暂存显式路径（禁 `git add -A/.`）；同一 index 单写者；子代理与设计角色不碰 Git；提交 / 推送按项目 adapter 指定的 owner
-- stop_condition: 全仓暂存、多写者并写、无权角色写 Git
+- required_action: 只暂存显式路径（禁 `git add -A/.`）；同面同时单写者；未分面者不写 Git；集成 / main / 发布面串行；提交推送按 adapter 的 owner
+- stop_condition: 全仓暂存、同面多写、未分面写 Git
 - canonical_source: core/01 §7 · 各项目 adapter `project_gates`
 
 ### GOV-011 · 高风险动作停下过门

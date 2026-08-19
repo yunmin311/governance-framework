@@ -148,7 +148,7 @@ Both cases follow the same rule: it moves quickly on small, reversible work and 
 
 The framework ships *as* a skill: [`skills/global-ai-dialogue-governor`](skills/global-ai-dialogue-governor/SKILL.md). Enable it (Claude / Codex / any agent), or paste the launcher, and any AI turns into a **governor** that, before it touches your work:
 
-- **picks exactly one mode** — `DISCOVERY-READ-ONLY`, `NORMAL-GOVERNANCE`, or `INCIDENT-READ-ONLY` — and states what's off-limits in it;
+- **classifies the task into exactly one of four modes** — `QUICK`, `NORMAL`, `STRUCTURAL`, `INCIDENT` — and separately sets its write capability (`READ-ONLY` / `WRITE` / `APPROVAL_REQUIRED`), then states what's off-limits in it;
 - **loads only the layers the task needs**, routing everyday work through `runtime/` first instead of pasting the whole library into the chat;
 - **keeps four state dimensions apart** — lifecycle / execution / verification / incident — and never promotes `UNKNOWN` or `DRAFT` into finished work;
 - **declares role, ownership, canonical sources, and Git paths** up front, then returns a receipt of what it actually read, changed, and left;

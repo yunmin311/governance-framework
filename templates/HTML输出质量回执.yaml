@@ -4,7 +4,7 @@ project_id:
 dialogue_id:
 role: design | main | advisor | notes | other
 result_status: EXPLORE | CANDIDATE | UNVERIFIED | APPROVED | FROZEN
-correction_level: NONE | CORRECT-IN-PLACE | BASELINE-RESET | INCIDENT-READ-ONLY
+correction_level: NONE | CORRECT-IN-PLACE | BASELINE-RESET | INCIDENT(READ-ONLY)
 
 sources:
   project_charter:
