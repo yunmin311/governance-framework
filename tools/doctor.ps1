@@ -56,10 +56,23 @@ if (Test-Path $CODEX) { Add-Row 'A 根基' 'Codex' 'OK' $CODEX '' }
 else { Add-Row 'A 根基' 'Codex' 'SKIP' '这台机没有 ~/.codex' '' }
 
 # ---------- B Desired State 漂移 ----------
-Compare-Installed 'B 配置' '全局 CLAUDE.md' 'harness\claude\global-CLAUDE.md' (Join-Path $CLAUDE 'CLAUDE.md') '仓是正本:先改 harness\claude\global-CLAUDE.md,再拷到 ~\.claude\CLAUDE.md'
-Compare-Installed 'B 配置' 'statusline.js'  'harness\claude\statusline.js'   (Join-Path $CLAUDE 'statusline.js') '从 harness\claude\statusline.js 拷到 ~\.claude\'
+# 三份**模板渲染**出来的文件不做哈希比对:仓里是模板(带 {{占位符}}),本机是按本机渲染的产物,
+# 两者本来就不该相同。改验两件事:模板在不在、安装副本里有没有没解析掉的占位符。
+# (2026-08-20:此前用哈希比对,逼得每台机去改 canonical source,多机会互相改坏。)
+function Check-Rendered($label, $tplRel, $installed, $fixHint) {
+  $tpl = Join-Path $REPO $tplRel
+  if (-not (Test-Path $tpl))       { Add-Row 'B 配置' $label 'MISSING' "仓里没有模板:$tplRel" '把本机现状收进仓当模板'; return }
+  if (-not (Test-Path $installed)) { Add-Row 'B 配置' $label 'MISSING' "本机没装:$installed" $fixHint; return }
+  $txt = [IO.File]::ReadAllText($installed, [Text.Encoding]::UTF8)
+  $left = [regex]::Matches($txt, '\{\{[A-Z_]+\}\}') | ForEach-Object { $_.Value } | Sort-Object -Unique
+  if ($left.Count) { Add-Row 'B 配置' $label 'DRIFT' ("安装副本里有没解析的占位符:" + ($left -join ', ')) $fixHint }
+  else { Add-Row 'B 配置' $label 'OK' '模板在仓、安装副本已完整渲染' '' }
+}
+Check-Rendered '全局 CLAUDE.md'  'harness\claude\global-CLAUDE.md'      (Join-Path $CLAUDE 'CLAUDE.md')     'tools\render_harness.ps1 -Install(按本机渲染,别手改安装副本,更别去改仓里的模板)'
+Check-Rendered '全局 settings'   'harness\claude\settings.desired.json' (Join-Path $CLAUDE 'settings.json') 'tools\render_harness.ps1 -Install;缺代理加 -Proxy'
+Compare-Installed 'B 配置' 'statusline.js'  'harness\claude\statusline.js'   (Join-Path $CLAUDE 'statusline.js') '从 harness\claude\statusline.js 拷到 ~\.claude\(这份不含机器绑定,仍是逐字节一致)'
 if (Test-Path $CODEX) {
-  Compare-Installed 'B 配置' 'Codex AGENTS.md' 'harness\codex\global-AGENTS.md' (Join-Path $CODEX 'AGENTS.md') '从 harness\codex\global-AGENTS.md 拷到 ~\.codex\'
+  Check-Rendered 'Codex AGENTS.md' 'harness\codex\global-AGENTS.md' (Join-Path $CODEX 'AGENTS.md') 'tools\render_harness.ps1 -Install'
 }
 
 $setPath = Join-Path $CLAUDE 'settings.json'
@@ -71,22 +84,66 @@ if (Test-Path $setPath) {
     if ($hookEvents.Count -gt 0) { Add-Row 'B 配置' 'hooks' 'OK' ("已装事件:" + ($hookEvents -join ', ')) '' }
     else { Add-Row 'B 配置' 'hooks' 'MISSING' 'settings.json 里没有 hooks 段' '照 harness\claude\settings.desired.json 的 hooks 段补回' }
 
-    # 钩子里写死盘符 = 换机后静默失效(路径不存在就 exit 0,不报错也不干活)。最难发现的一类故障。
-    # 判定要能分辨两种情况,否则会误报:
-    #   写死  = 直接拿 'D:\...' 去用,换机即废;
-    #   可移植 = 先读 $env:XXX 覆盖、再 Test-Path 逐个探测候选盘符 —— 列表里出现盘符是正常的。
-    # 只有「有盘符路径」且「既没有 env 覆盖、也没有 Test-Path 探测」才算写死。
+    # 按**语义身份**点名预期钩子:少一条、或某条被复制成两份,都要报。
+    # 2026-08-20 血的教训:一次批量替换把「版权红线」「跨项目隔离」两条 deny 覆盖成了
+    # 「HTML 设计红线」的副本 —— 钩子个数没变、可移植性没问题、源==安装副本,
+    # 于是当时的 doctor 一路全绿,而两道硬红线其实已经没了。只数数量、只比哈希都抓不到这种。
+    #
+    # 清单**从 harness/manifest.yaml 的 hooks 段读**,doctor 自己不维护第二份 ——
+    # 两份清单必然各自漂移,而漂了没人知道,那就又回到"看着全绿其实已经坏了"。
+    $EXPECTED_HOOKS = @()
+    $manPath = Join-Path $REPO 'harness\manifest.yaml'
+    if (Test-Path $manPath) {
+      # 字段顺序无关:先按 id 收集,读完再挑出带 match 的。
+      $acc = [ordered]@{}; $curId = $null
+      foreach ($ln in ([IO.File]::ReadAllText($manPath,[Text.Encoding]::UTF8) -split "`r?`n")) {
+        if ($ln -match '^\s*-\s*id:\s*(\S+)')      { $curId = $Matches[1]; if (-not $acc[$curId]) { $acc[$curId] = @{ id=$curId } }; continue }
+        if (-not $curId) { continue }
+        if ($ln -match '^\s*match:\s*(.+?)\s*$')   { $acc[$curId]['need'] = $Matches[1] }
+        if ($ln -match '^\s*purpose:\s*(.+?)\s*$') { $acc[$curId]['why']  = $Matches[1] }
+      }
+      foreach ($k in $acc.Keys) { if ($acc[$k]['need']) { $EXPECTED_HOOKS += $acc[$k] } }
+    }
+    if (-not $EXPECTED_HOOKS.Count) {
+      Add-Row 'B 配置' '预期钩子集合' 'MISSING' 'harness\manifest.yaml 里没有带 match 的 hooks 声明' '在 manifest 的 hooks 段给每条钩子写 id + match(稳定特征串);这是唯一事实源,别让 doctor 自己列'
+    }
+    $allCmds = @()
+    foreach ($ev in @($set.hooks.PSObject.Properties.Value)) {
+      foreach ($entry in @($ev)) { foreach ($h in @($entry.hooks)) { if ($h.command) { $allCmds += [string]$h.command } } }
+    }
+    $missing = @(); $dup = @()
+    foreach ($e in $EXPECTED_HOOKS) {
+      $n = @($allCmds | Where-Object { $_ -match [regex]::Escape($e.need) }).Count
+      if ($n -eq 0) { $missing += ("{0}({1})" -f $e.id, $e.why) }
+      elseif ($n -gt 1) { $dup += ("{0}×{1}" -f $e.id, $n) }
+    }
+    if ($missing.Count) { Add-Row 'B 配置' '预期钩子集合' 'MISSING' ("缺 " + ($missing -join '; ')) '从 harness\claude\settings.desired.json 重新渲染安装(tools\render_harness.ps1 -Install);别手工拼钩子' }
+    elseif ($dup.Count) { Add-Row 'B 配置' '预期钩子集合' 'DRIFT' ("有重复(多半是被批量替换覆盖了):" + ($dup -join ', ')) '拿 settings.json.bak-* 对照,确认每条语义身份唯一,再重新渲染安装' }
+    elseif ($EXPECTED_HOOKS.Count) { Add-Row 'B 配置' '预期钩子集合' 'OK' ("manifest 声明 {0} 条,安装副本齐、无重复" -f $EXPECTED_HOOKS.Count) '' }
+
+    # 可移植性判的是**仓里的模板**,不是安装副本。
+    # 安装副本本来就该含字面绝对路径(那是 render_harness.ps1 按本机渲染出来的结果),
+    # 拿它来判会必然误报 —— 2026-08-20 第一版就这么误报过一次。
+    # 模板里合法的写法只有两种:{{占位符}}(安装时渲染),或 $env 覆盖 + Test-Path 候选探测。
     $bad = @()
-    foreach ($grp in @($set.hooks.PSObject.Properties.Value)) {
-      foreach ($entry in @($grp)) {
-        foreach ($h in @($entry.hooks)) {
-          $cmd = [string]$h.command
-          if (-not $cmd) { continue }
-          $hasDrive    = $cmd -match '[A-Za-z]:[\\/]'
-          $hasEnvOvr   = $cmd -match '\$env:[A-Za-z_]\w*'
-          $hasProbe    = $cmd -match 'Test-Path'
-          if ($hasDrive -and -not ($hasEnvOvr -and $hasProbe)) {
-            $bad += ($cmd.Substring(0, [Math]::Min(60, $cmd.Length)) + '…')
+    $tplPath = Join-Path $REPO 'harness\claude\settings.desired.json'
+    if (Test-Path $tplPath) {
+      try { $tplSet = [IO.File]::ReadAllText($tplPath, [Text.Encoding]::UTF8) | ConvertFrom-Json } catch { $tplSet = $null }
+      if ($tplSet -and $tplSet.hooks) {
+        foreach ($grp in @($tplSet.hooks.PSObject.Properties.Value)) {
+          foreach ($entry in @($grp)) {
+            foreach ($h in @($entry.hooks)) {
+              $cmd = [string]$h.command
+              if (-not $cmd) { continue }
+              # 先把占位符抠掉再看还有没有盘符
+              $probe = [regex]::Replace($cmd, '\{\{[A-Z_]+\}\}', '')
+              $hasDrive  = $probe -match '[A-Za-z]:[\\/]'
+              $hasEnvOvr = $cmd -match '\$env:[A-Za-z_]\w*'
+              $hasProbe2 = $cmd -match 'Test-Path'
+              if ($hasDrive -and -not ($hasEnvOvr -and $hasProbe2)) {
+                $bad += ($cmd.Substring(0, [Math]::Min(60, $cmd.Length)) + '…')
+              }
+            }
           }
         }
       }
@@ -166,6 +223,17 @@ if ((Test-Path $repoMem) -and (Test-Path $machMem)) {
 
 # ---------- E Git 卫生 ----------
 $repos = Get-ChildItem $PARENT -Directory -ErrorAction SilentlyContinue | Where-Object { Test-Path (Join-Path $_.FullName '.git') }
+
+# 身份判据要通用:不点名任何具体域名(那等于把作者的雇主写进工具)。
+# 做法是取**这批个人仓里最常见的那个邮箱**当基准,偏离基准的报出来让人确认。
+# 这样既能抓到"个人仓误用了公司/学校邮箱",也能抓到"内网仓误用了个人邮箱",而且换个人用一样成立。
+$personalEmails = @()
+foreach ($r in $repos) {
+  $u = (git -C $r.FullName remote get-url origin 2>$null)
+  if ($u -match 'github\.com[:/]') { $e = (git -C $r.FullName config user.email); if ($e) { $personalEmails += $e } }
+}
+$baseline = ($personalEmails | Group-Object | Sort-Object Count -Descending | Select-Object -First 1).Name
+
 foreach ($r in $repos) {
   $p = $r.FullName; $n = $r.Name
   $url = (git -C $p remote get-url origin 2>$null)
@@ -174,11 +242,11 @@ foreach ($r in $repos) {
   $email = (git -C $p config user.email)
   $problems = @()
   if ($isPersonal) {
-    if ($url -like 'https://*') { $problems += 'origin 还是 https(这台机 gh 凭证助手要调 MSYS sh,推送会挂;应改 ssh)' }
+    if ($url -like 'https://*') { $problems += 'origin 还是 https(若本机 git 的凭证助手不稳,推送会挂;建议改 ssh)' }
     if ($email -notmatch '@') { $problems += "身份未配" }
-    elseif ($email -match 'alum\.|iflytek') { $problems += "身份是 $email(学校/公司邮箱,不该用在个人仓)" }
+    elseif ($baseline -and $email -ne $baseline) { $problems += "身份 $email 与其余个人仓的基准 $baseline 不一致,确认是否用错了邮箱" }
   } else {
-    if ($email -match 'gmail') { $problems += "非 GitHub 仓却用了个人 gmail:$email" }
+    if ($baseline -and $email -eq $baseline) { $problems += "这是非 GitHub 远端(多半是内网/公司仓),却用了个人仓的基准邮箱 $baseline" }
   }
   $dirty = (git -C $p status --porcelain | Measure-Object -Line).Lines
   $br = (git -C $p rev-parse --abbrev-ref HEAD 2>$null)

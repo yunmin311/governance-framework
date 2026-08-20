@@ -1,0 +1,81 @@
+# harness/manifest.yaml — TEMPLATE
+#
+# Copy this to `<your-overlay>/harness/manifest.yaml` and fill it in. It is the **single source of
+# truth** for two things, and nothing else is allowed to keep a second copy of either:
+#
+#   1. what gets installed onto a machine, and where;
+#   2. which hooks are expected to exist, by stable identity.
+#
+# `tools/render_harness.ps1` reads `render.vars` and `install` from here.
+# `tools/doctor.ps1` reads `hooks` from here. Neither script carries its own list —
+# two lists drift apart, and nobody notices that they have.
+#
+# ## Why templates at all
+#
+# Everything machine-bound — project roots, where a shared asset library lives, the literal
+# absolute path in an `@import`, the proxy, the name of the memory root — must NOT be written
+# into the canonical source. Two machines would then keep overwriting each other's desired state
+# (machine A needs `@A:/rules.md`, machine B needs `@B:/rules.md`).
+#
+# Instead the repo keeps `{{PLACEHOLDER}}` templates and the renderer produces an installed copy
+# with **literal** values for the machine it is run on. An `@import` cannot read an environment
+# variable — but the rendered output is literal, so the template does not have to be.
+#
+# Secrets are injected into the installed copy only and are **never written back into the repo**.
+
+generated_at: "<DATE>"
+
+harness:
+  claude:
+    model: <YOUR_MODEL>
+    install:
+      - src: harness/claude/global-CLAUDE.md
+        dst: ~/.claude/CLAUDE.md
+        note: global instructions; the machine-bound region is placeholders, rendered per machine
+      - src: harness/claude/settings.desired.json
+        dst: ~/.claude/settings.json
+        note: deny list + hooks; proxy and any machine paths arrive by rendering, not by hand
+
+    # ===== expected hook set — THE source of truth =====
+    # The hook bodies live inline in settings.desired.json; this section declares which ones
+    # must exist and how to recognise each. `match` is a stable substring of that hook's command.
+    # If you change a hook's implementation and its match string changes, update it HERE.
+    #
+    # Why identity and not a count: a bulk find-and-replace can overwrite one hook's body with
+    # another's. The count stays the same, the file still parses, source still equals installed —
+    # and two hard guardrails are silently gone. Only checking identity catches that.
+    hooks:
+      - id: <hook-id>
+        event: PreToolUse
+        match: <stable substring of this hook's command>
+        purpose: <what it protects>
+        enforcement: HARD    # HARD = it can deny the action; SOFT = it only injects context
+
+# ===== render variables: where each {{PLACEHOLDER}} gets its value =====
+# Supported `from` resolvers (the renderer knows only these; the *values* live here, so the
+# script itself never hardcodes a project name or a path):
+#   sibling-git-repos : sibling directories of the overlay that are themselves git repos
+#   sibling           : one sibling directory, by `name`
+#   file-in-parent    : one file in the parent directory, by `name`
+#   memory-root-match : identify the memory root by matching memory/MEMORY.md content.
+#                       **If this does not resolve to exactly one candidate it reports UNKNOWN**
+#                       and asks you to pass it explicitly — it never guesses from a drive letter.
+#                       A wrong guess points at a memory directory that does not exist and then
+#                       fails silently, which is the worst outcome available.
+#   secret            : injected into the installed copy only; never written back to the repo
+render:
+  vars:
+    PROJECT_ROOTS:   { from: sibling-git-repos }
+    <SOME_PATH>:     { from: sibling, name: <sibling-directory-name> }
+    <SOME_IMPORT>:   { from: file-in-parent, name: <file-name> }
+    PROJECT_HASH:    { from: memory-root-match }
+    HTTP_PROXY:      { from: secret }
+    HTTPS_PROXY:     { from: secret }
+
+not_tracked:
+  - what: runtime state (sessions, caches, transcripts, telemetry)
+    why: regenerated per machine; migrating it is meaningless
+  - what: an auto-accumulated command allowlist
+    why: observed state, full of one-off commands and dead absolute paths
+  - what: credentials, tokens, proxy values
+    why: secrets never enter git
