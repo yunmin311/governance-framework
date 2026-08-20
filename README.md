@@ -95,6 +95,7 @@ Using Codex or another agent? Copy into that agent's skills directory instead �
 - copy `profiles/user/user-profile.template.md` → fill in your role, **your language**, how you want reports, and what only you may decide;
 - use `profiles/machines/machine-profile.template.yaml` + `projects/project-adapter.template.yaml` to record where your projects live and who may commit;
 - keep these filled-in files in **your own private repo** — never push them back here.
+- **Then bind that repo, or the framework will never load it.** Having a private repo is not enough; this run has to resolve it. Either set `GOV_OVERLAY=<private-overlay-root>` (recommended — unambiguous), or drop an `overlay.yaml` marker in a private repo sitting beside this framework. If two sibling markers exist, the framework refuses to guess: `overlay_root` becomes `UNKNOWN`, the run drops to read-only, and you must set `GOV_OVERLAY` explicitly. See `docs/分层导航-复用层与本机层.md`.
 
 Without this step it is just generic files on disk; with it, it governs your own work across your machines and models.
 

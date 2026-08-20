@@ -95,6 +95,7 @@ cp -r governance-framework/skills/* ~/.claude/skills/      # Claude Code
 - 复制 `profiles/user/user-profile.template.md`,填上你的角色、你用什么语言、报告想怎么给你、哪些事只有你能拍板;
 - 用 `profiles/machines/machine-profile.template.yaml` 和 `projects/project-adapter.template.yaml` 记下你的项目在哪、谁能提交;
 - 这些填好的文件放进你自己的私有仓,别推回本框架。
+- **然后要把这个仓绑上,否则框架永远加载不到它。** 光有私有仓不算数,本次运行必须真的解析到它:要么设 `GOV_OVERLAY=<你的私有 overlay 根>`(**推荐**,无歧义),要么在与本框架同级的私有仓里放一个 `overlay.yaml` 标记文件。同级出现两个标记时框架**不猜**:`overlay_root` 标 `UNKNOWN`、本轮降只读,必须由你显式设 `GOV_OVERLAY`。详见 `docs/分层导航-复用层与本机层.md`。
 
 少了这一步,它只是硬盘上一份通用文件;补上这一步,它才管得了你自己的、跨机器和模型的活。
 

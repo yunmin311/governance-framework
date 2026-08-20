@@ -12,9 +12,12 @@ default_governance_characters_max: 8000
 # 完整槽位表见 docs/分层导航-复用层与本机层.md(Personal Overlay Contract)。
 overlay:
   resolution_order:
-    - $GOV_OVERLAY 指向的目录
-    - Kernel 同级目录中含 overlay.yaml 的兄弟目录
+    - $GOV_OVERLAY 指向的目录（推荐,唯一无歧义）
+    - Kernel 同级目录中**恰好一个**含 overlay.yaml 的兄弟目录
     - 都没有 → 只用 Kernel 模板/默认值,并在开工声明里写明 "running on kernel defaults, no overlay"
+  ambiguous_overlay: 同级出现两个及以上 overlay.yaml → 禁止任意选一个;overlay_root 标 UNKNOWN、本轮降 READ-ONLY、列出全部候选,要求用户显式设 GOV_OVERLAY
+  overlay_yaml_is: 仅 discovery marker（可为空文件,设了 GOV_OVERLAY 时根本不需要它）;不得发展成第二套配置 schema
+  must_report: 交付前报告本轮实际解析结果 —— resolved overlay_root / resolution source / resolved runtime_user_profile;"私有仓存在"不等于"本轮解析到了它"
   overridable:
     runtime/02-user-runtime-profile.md: Overlay 的同名文件全胜;Kernel 里那份只是形状模板
     profiles/user/: Overlay 的用户画像实例覆盖 Kernel 模板

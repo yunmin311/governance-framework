@@ -25,10 +25,17 @@ Send this list, ask each item, and mark `UNKNOWN` if unanswered — never guess:
 
 ## Step 3 — apply, item by item
 - What you can do directly: copy `profiles/user/user-profile.template.md` into their profile and fill it from their answers; create a machine-profile instance and project adapters from the templates. **Keep these filled-in instances in the user's own private repo — never push them back to this framework.**
+- **Bind that private repo as the Personal Overlay — creating it is not the same as binding it.** Either set `GOV_OVERLAY=<private-overlay-root>` (recommended, unambiguous), or place an `overlay.yaml` marker in a private repo sitting beside this framework. `overlay.yaml` is only a discovery marker; it may be empty, and it is not needed at all when `GOV_OVERLAY` is set.
+- **If more than one sibling `overlay.yaml` exists, do not pick one.** Report `overlay_root: UNKNOWN`, drop this run to read-only, list every candidate path, and ask the user to set `GOV_OVERLAY` explicitly. Guessing here means writing into the wrong private repo and acting on someone else's profile — silently, with no error.
 - What touches sensitive machine config (agent settings, permissions, memory): hand the user a ready-to-run command instead of doing it silently.
 
 ## Step 4 — self-check and hand over
 - Run `python -X utf8 tools/validate_runtime.py` (and `validate_paths`, `validate_release`).
+- **Report the overlay resolution you actually got this run — not that a private repo exists somewhere:**
+  - `resolved overlay_root:` the absolute path in use, or `UNKNOWN`
+  - `resolution source:` `GOV_OVERLAY` / `sibling overlay.yaml` / `kernel defaults (no overlay)`
+  - `resolved runtime_user_profile:` the file actually loaded — the overlay's instance, or the kernel template
+  If these three cannot be stated from what happened in this run, the setup is not finished, no matter what exists on disk.
 - Give the user a three-column list: **done / needs you (with commands) / only you can decide**.
 - Until git identity is proven with a real commit and guardrails are set, keep this machine read-only.
 
