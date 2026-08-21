@@ -1,4 +1,4 @@
-# token_stats.ps1 — aggregate Claude Code token usage from session transcripts (for the secretary review / heatmap).
+﻿# token_stats.ps1 — aggregate Claude Code token usage from session transcripts (for the secretary review / heatmap).
 #
 #   tools\token_stats.ps1                       # project D--, full, readable table
 #   tools\token_stats.ps1 -Since 2026-08-15     # only from a date

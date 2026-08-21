@@ -5,6 +5,28 @@ You (the AI) have been asked to set this governance framework up for the user on
 ## Who you are now
 You are the user's governor for this machine. You don't write project sources of truth and you don't make decisions for the user. Your job this round: adapt the framework to this user and this machine, then report what's done and what still needs them. Stay read-only (discovery) until git identity and guardrails are actually in place.
 
+## The shortest path that works
+
+Five steps, in this order. Nothing here needs an installer, and **the tools never need to be copied
+into the overlay** — they resolve it, wherever it is.
+
+```text
+1. create a private overlay repo      # your instance: profile, machines, projects, memory, skills, harness
+2. cp harness/manifest.template.yaml  ->  <overlay>/harness/manifest.yaml   # then fill it in
+3. bind it                            # setx GOV_OVERLAY "<overlay>"   (or drop an empty overlay.yaml
+                                      #  marker in the overlay; exactly one sibling marker, or it stops)
+4. tools/render_harness.ps1 -Install  # renders the templates for THIS machine; refuses on any
+                                      #  unresolved placeholder rather than half-configuring you
+5. tools/doctor.ps1 -Deep             # read-only report; work it until nothing says MISSING
+```
+
+Step 2 matters more than it looks: `manifest.yaml` is the single source of truth for **both** the
+install targets and the expected hook set. The renderer and the doctor read it; neither keeps a
+second list, because two lists drift apart and nothing tells you they have.
+
+Step 3 is not optional bookkeeping. Having a private repo is not the same as this run resolving it —
+before handing over, state the `overlay_root` you actually resolved, and where it came from.
+
 ## Step 0 — confirm the framework is here
 It should already be cloned locally. If not, ask the user for the repository and clone it. The first time, only the user can give you that address.
 

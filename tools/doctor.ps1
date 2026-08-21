@@ -1,4 +1,4 @@
-# doctor.ps1 — 这台机器缺什么?一条命令给答案。
+﻿# doctor.ps1 — 这台机器缺什么?一条命令给答案。
 #
 #   tools\doctor.ps1              # 体检,输出报告
 #   tools\doctor.ps1 -Deep        # 额外跑三校验(慢一些)
@@ -16,14 +16,36 @@
 #   WARN    = 不致命但要知道
 #   SKIP    = 这台机器上不适用 / 依赖的工具没装
 
-param([switch]$Deep, [switch]$Quiet, [string]$ProjectHash = 'D--')
+param([switch]$Deep, [switch]$Quiet, [string]$ProjectHash)
 $ErrorActionPreference = 'Continue'
 
-$REPO = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+# Kernel 与 Overlay 是两个根,必须分开:
+#   KERNEL_ROOT  = 这份脚本所在的框架根(工具住在这里)
+#   OVERLAY_ROOT = 你的私有实例根(真 manifest / harness 模板 / memory / 个人 skill 住在这里)
+# 两者可以是同一个目录(私有仓自带工具时),也可以完全分开(工具在公开 Kernel、实例在别处)。
+# **绝不要求把工具复制进 Overlay 才能工作。**
+$KERNEL_ROOT = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $HOMEDIR = $env:USERPROFILE
 $CLAUDE = Join-Path $HOMEDIR '.claude'
 $CODEX  = Join-Path $HOMEDIR '.codex'
-$PARENT = Split-Path $REPO -Parent
+$PARENT = Split-Path $KERNEL_ROOT -Parent
+
+function Resolve-OverlayRoot($kernelRoot) {
+  if ($env:GOV_OVERLAY) {
+    if (Test-Path $env:GOV_OVERLAY) { return @{ root=(Resolve-Path $env:GOV_OVERLAY).Path; source='GOV_OVERLAY' } }
+    return @{ root=$null; source='GOV_OVERLAY 指向的路径不存在'; }
+  }
+  if (Test-Path (Join-Path $kernelRoot 'overlay.yaml')) { return @{ root=$kernelRoot; source='self(本仓自身就是 overlay)' } }
+  $p = Split-Path $kernelRoot -Parent
+  $cand = @(Get-ChildItem $p -Directory -ErrorAction SilentlyContinue | Where-Object { Test-Path (Join-Path $_.FullName 'overlay.yaml') })
+  if ($cand.Count -eq 1) { return @{ root=$cand[0].FullName; source='同级 overlay.yaml' } }
+  if ($cand.Count -eq 0) { return @{ root=$null; source='没找到 overlay' } }
+  return @{ root=$null; source='歧义'; candidates=@($cand | ForEach-Object { $_.FullName }) }
+}
+$ov = Resolve-OverlayRoot $KERNEL_ROOT
+$OVERLAY = $ov.root
+# 兼容下文既有写法:$REPO 指 Overlay(真内容所在),Kernel 用 $KERNEL_ROOT。
+$REPO = if ($OVERLAY) { $OVERLAY } else { $KERNEL_ROOT }
 
 $script:rows = @()
 function Add-Row($section, $item, $status, $detail, $fix) {
@@ -42,11 +64,15 @@ function Compare-Installed($section, $label, $repoRel, $installed, $fixHint) {
 }
 
 # ---------- A 根基 ----------
-Add-Row 'A 根基' '治理仓' $(if (Test-Path (Join-Path $REPO '.git')) { 'OK' } else { 'MISSING' }) $REPO '这份 doctor 必须放在治理仓的 tools\ 下才能定位正本'
+Add-Row 'A 根基' 'Kernel 根' $(if (Test-Path (Join-Path $KERNEL_ROOT '.git')) { 'OK' } else { 'WARN' }) $KERNEL_ROOT ''
 
-$fw = Join-Path $PARENT 'governance-framework'
-if (Test-Path $fw) { Add-Row 'A 根基' '公开框架仓' 'OK' $fw '' }
-else { Add-Row 'A 根基' '公开框架仓' 'WARN' "同级没有 governance-framework" '只影响对外发布,不影响本机干活' }
+if ($OVERLAY) {
+  Add-Row 'A 根基' 'Overlay 根' 'OK' ("{0}  (解析来源:{1})" -f $OVERLAY, $ov.source) ''
+} elseif ($ov.source -eq '歧义') {
+  Add-Row 'A 根基' 'Overlay 根' 'MISSING' ("UNKNOWN —— 同级有多个 overlay.yaml:" + (($ov.candidates) -join ', ')) '**不许挑一个**。显式设 GOV_OVERLAY 指定用哪个:setx GOV_OVERLAY "<你的私有实例根>"(新开终端生效)'
+} else {
+  Add-Row 'A 根基' 'Overlay 根' 'MISSING' ("UNKNOWN —— " + $ov.source) '设 GOV_OVERLAY 指向你的私有实例根,或在它根下放一个 overlay.yaml 标记(空文件即可)'
+}
 
 $cc = Get-Command claude -ErrorAction SilentlyContinue
 if ($cc) { Add-Row 'A 根基' 'Claude Code' 'OK' $cc.Source '' }
@@ -68,11 +94,41 @@ function Check-Rendered($label, $tplRel, $installed, $fixHint) {
   if ($left.Count) { Add-Row 'B 配置' $label 'DRIFT' ("安装副本里有没解析的占位符:" + ($left -join ', ')) $fixHint }
   else { Add-Row 'B 配置' $label 'OK' '模板在仓、安装副本已完整渲染' '' }
 }
-Check-Rendered '全局 CLAUDE.md'  'harness\claude\global-CLAUDE.md'      (Join-Path $CLAUDE 'CLAUDE.md')     'tools\render_harness.ps1 -Install(按本机渲染,别手改安装副本,更别去改仓里的模板)'
-Check-Rendered '全局 settings'   'harness\claude\settings.desired.json' (Join-Path $CLAUDE 'settings.json') 'tools\render_harness.ps1 -Install;缺代理加 -Proxy'
-Compare-Installed 'B 配置' 'statusline.js'  'harness\claude\statusline.js'   (Join-Path $CLAUDE 'statusline.js') '从 harness\claude\statusline.js 拷到 ~\.claude\(这份不含机器绑定,仍是逐字节一致)'
-if (Test-Path $CODEX) {
-  Check-Rendered 'Codex AGENTS.md' 'harness\codex\global-AGENTS.md' (Join-Path $CODEX 'AGENTS.md') 'tools\render_harness.ps1 -Install'
+# 安装清单**遍历 manifest 的 install 段**得到,doctor 自己不再列第二份 ——
+# 否则 manifest 加了一项、doctor 不知道,或 doctor 列了一项、manifest 里没有,两边都不会报错。
+$manifestPath = Join-Path $REPO 'harness\manifest.yaml'
+if (-not $OVERLAY) {
+  Add-Row 'B 配置' '安装清单' 'MISSING' '没解析到 Overlay,无法定位 manifest' '先解决上面的「Overlay 根」'
+} elseif (-not (Test-Path $manifestPath)) {
+  Add-Row 'B 配置' '安装清单' 'MISSING' "Overlay 里没有 harness\manifest.yaml" '从 Kernel 的 harness\manifest.template.yaml 拷一份到你的 Overlay 再填'
+} else {
+  $manLines = [IO.File]::ReadAllText($manifestPath,[Text.Encoding]::UTF8) -split "`r?`n"
+  $entries = @(); $curSrc = $null
+  foreach ($ln in $manLines) {
+    if ($ln -match '^\s*-\s*src:\s*(\S+)\s*$') { $curSrc = $Matches[1]; continue }
+    if ($ln -match '^\s*dst:\s*(\S+)\s*$' -and $curSrc) {
+      $entries += [pscustomobject]@{ src=$curSrc; dst=$Matches[1] }
+      $curSrc = $null
+    }
+  }
+  if (-not $entries.Count) { Add-Row 'B 配置' '安装清单' 'MISSING' 'manifest 的 install 段里没读到 src/dst 条目' '照 harness\manifest.template.yaml 的形状补 install 段' }
+  foreach ($e in $entries) {
+    $srcRel = $e.src.Replace('/','\')
+    $dstAbs = $e.dst.Replace('~', $HOMEDIR).Replace('/','\')
+    $label  = Split-Path $e.dst -Leaf
+    if ($srcRel.EndsWith('\')) { continue }                       # 目录条目(如 skills/)归 C 段
+    if ($dstAbs -like "*\.codex\*" -and -not (Test-Path $CODEX)) {
+      Add-Row 'B 配置' $label 'SKIP' '这台机没有 ~/.codex' ''
+      continue
+    }
+    $srcAbs = Join-Path $REPO $srcRel
+    $isTemplate = $false
+    if (Test-Path $srcAbs) {
+      $isTemplate = ([regex]::Matches([IO.File]::ReadAllText($srcAbs,[Text.Encoding]::UTF8), '\{\{[A-Z_]+\}\}')).Count -gt 0
+    }
+    if ($isTemplate) { Check-Rendered $label $srcRel $dstAbs 'tools\render_harness.ps1 -Install(按本机渲染;别手改安装副本,更别去改仓里的模板)' }
+    else { Compare-Installed 'B 配置' $label $srcRel $dstAbs "从 $($e.src) 拷到 $($e.dst)(这份不含机器绑定,应逐字节一致)" }
+  }
 }
 
 $setPath = Join-Path $CLAUDE 'settings.json'
@@ -185,11 +241,29 @@ if ((Test-Path $repoSkills) -and (Test-Path $instSkills)) {
 } else { Add-Row 'C skills' 'skills 目录' 'MISSING' '仓或本机缺 skills 目录' '' }
 
 # ---------- D 记忆 ----------
-# 记忆是**按工作目录分开存的**,一台机会有好几份。主库 = $ProjectHash 那个根(仓里扁平的那份),
-# 其余各根存在 memory\_roots\<根>\。别再像第一版那样随便挑一个根来比,会比错(2026-08-19 踩到)。
+# 记忆是**按工作目录分开存的**,一台机会有好几份。主库那个根要**精确解析,不猜**:
+# 用 memory\MEMORY.md 的内容去匹配,恰好一个候选才算数;0 个或多个一律 UNKNOWN,
+# 要求 -ProjectHash 显式指定。与 render_harness.ps1 同一套规则 ——
+# 之前默认 'D--',换机后会安静地去找一个不存在的目录然后什么都不报(2026-08-20 指出)。
 $repoMem = Join-Path $REPO 'memory'
-$machMem = Join-Path $CLAUDE "projects\$ProjectHash\memory"
 $projRoot = Join-Path $CLAUDE 'projects'
+if (-not $ProjectHash) {
+  $repoIndex = Join-Path $repoMem 'MEMORY.md'
+  if ((Test-Path $repoIndex) -and (Test-Path $projRoot)) {
+    $want = (Get-FileHash $repoIndex -Algorithm MD5).Hash
+    $hits = @()
+    foreach ($d in (Get-ChildItem $projRoot -Directory -ErrorAction SilentlyContinue)) {
+      $mi = Join-Path $d.FullName 'memory\MEMORY.md'
+      if ((Test-Path $mi) -and ((Get-FileHash $mi -Algorithm MD5).Hash -eq $want)) { $hits += $d.Name }
+    }
+    if ($hits.Count -eq 1) { $ProjectHash = $hits[0] }
+    elseif ($hits.Count -gt 1) { Add-Row 'D 记忆' '主库根名' 'MISSING' ("UNKNOWN —— 有 {0} 个候选都匹配:{1}" -f $hits.Count, ($hits -join ', ')) '**不猜**。用 -ProjectHash 显式指定一个' }
+  }
+  if (-not $ProjectHash -and -not ($script:rows | Where-Object { $_.Item -eq '主库根名' })) {
+    Add-Row 'D 记忆' '主库根名' 'MISSING' 'UNKNOWN —— 用 memory\MEMORY.md 内容匹配不到任何候选' '**不猜**。用 -ProjectHash 显式指定(形如 D--,即工作目录 D:\ 对应的目录名)'
+  }
+}
+$machMem = if ($ProjectHash) { Join-Path $CLAUDE "projects\$ProjectHash\memory" } else { $null }
 
 # D-2 其余各根有没有进存档(96 份记忆曾经完全没备份)
 if (Test-Path $projRoot) {
@@ -208,7 +282,7 @@ if (Test-Path $projRoot) {
   else { Add-Row 'D 记忆' '其余各根存档' 'OK' '所有工作目录的记忆都已存档进 memory\_roots\' '' }
 }
 
-if ((Test-Path $repoMem) -and (Test-Path $machMem)) {
+if ($machMem -and (Test-Path $repoMem) -and (Test-Path $machMem)) {
   $rc = (Get-ChildItem $repoMem -Filter *.md).Count
   $mc = (Get-ChildItem $machMem -Filter *.md).Count
   $diff = @()
@@ -219,7 +293,7 @@ if ((Test-Path $repoMem) -and (Test-Path $machMem)) {
   }
   if ($diff.Count) { Add-Row 'D 记忆' "主库($ProjectHash)" 'DRIFT' ("仓=$rc 本机=$mc;" + (($diff | Select-Object -First 5) -join '; ')) 'tools\sync_memory.ps1 -Push' }
   else { Add-Row 'D 记忆' "主库($ProjectHash)" 'OK' "$rc 份,与本机一致" '' }
-} else { Add-Row 'D 记忆' "主库($ProjectHash)" 'MISSING' "找不到 $repoMem 或 $machMem" 'tools\sync_memory.ps1 -Push;若本机主根不是 D--,用 -ProjectHash 指定' }
+} elseif ($machMem) { Add-Row 'D 记忆' "主库($ProjectHash)" 'MISSING' "找不到 $repoMem 或 $machMem" 'tools\sync_memory.ps1 -Push' }
 
 # ---------- E Git 卫生 ----------
 $repos = Get-ChildItem $PARENT -Directory -ErrorAction SilentlyContinue | Where-Object { Test-Path (Join-Path $_.FullName '.git') }
@@ -261,8 +335,10 @@ foreach ($r in $repos) {
 # 换个人用就是错的(2026-08-19:原先写死 <your-github-user>,构建的泄漏闸因此拦下整个脚本,闸拦得对)。
 $gh = Get-Command gh -ErrorAction SilentlyContinue
 if ($gh) {
+  # 要查的仓 = Overlay 根与 Kernel 根(两者可能是同一个,去重后逐个查)
   $targets = @()
-  foreach ($r in @($REPO, $fw)) {
+  $repoCandidates = @($OVERLAY, $KERNEL_ROOT) | Where-Object { $_ } | Select-Object -Unique
+  foreach ($r in $repoCandidates) {
     if (-not (Test-Path (Join-Path $r '.git'))) { continue }
     $u = (git -C $r remote get-url origin 2>$null)
     if ($u -match 'github\.com[:/]([^/]+)/([^/\s]+?)(\.git)?$') { $targets += , @($Matches[1], $Matches[2], (Split-Path $r -Leaf)) }

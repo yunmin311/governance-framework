@@ -1,4 +1,4 @@
-# Re-render the hand-drawn diagram SVGs to PNG at their EXACT SVG size.
+﻿# Re-render the hand-drawn diagram SVGs to PNG at their EXACT SVG size.
 #
 # Each PNG is rendered at 2x device scale, with zero page margin and a
 # transparent background, so the PNG matches the SVG's own viewBox exactly.

@@ -1,4 +1,4 @@
-# render_harness.ps1 — 把仓内的 harness 模板按**当前这台机**渲染成安装副本
+﻿# render_harness.ps1 — 把仓内的 harness 模板按**当前这台机**渲染成安装副本
 #
 #   tools\render_harness.ps1                     # 干跑:只报会渲染成什么,不写任何东西
 #   tools\render_harness.ps1 -Install            # 真装(自动备份原件)
@@ -26,16 +26,51 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
-$REPO    = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$PARENT  = Split-Path $REPO -Parent
+# Kernel 与 Overlay 是两个根:
+#   KERNEL_ROOT  = 这份脚本所在的框架根(工具住这儿)
+#   OVERLAY_ROOT = 你的私有实例根(真 manifest / harness 模板 / memory / 个人 skill 住这儿)
+# 两者可以重合(私有仓自带工具),也可以完全分开。**绝不要求把工具复制进 Overlay 才能工作。**
+# 注意:项目根是 **Overlay 的兄弟**,不是 Kernel 的兄弟 —— 私有实例仓和各项目并排放。
+$KERNEL_ROOT = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $HOMEDIR = $env:USERPROFILE
 $CLAUDE  = Join-Path $HOMEDIR '.claude'
 $CODEX   = Join-Path $HOMEDIR '.codex'
-$MANIFEST = Join-Path $REPO 'harness\manifest.yaml'
 
 function Norm($p) { if (-not $p) { return '' } ; return $p.ToString().Replace('\','/') }
 
-if (-not (Test-Path $MANIFEST)) { Write-Output "找不到 harness\manifest.yaml —— 它是安装清单与变量定义的唯一事实源。"; exit 1 }
+function Resolve-OverlayRoot($kernelRoot) {
+  if ($env:GOV_OVERLAY) {
+    if (Test-Path $env:GOV_OVERLAY) { return @{ root=(Resolve-Path $env:GOV_OVERLAY).Path; source='GOV_OVERLAY' } }
+    return @{ root=$null; source='GOV_OVERLAY 指向的路径不存在' }
+  }
+  if (Test-Path (Join-Path $kernelRoot 'overlay.yaml')) { return @{ root=$kernelRoot; source='self(本仓自身就是 overlay)' } }
+  $p = Split-Path $kernelRoot -Parent
+  $cand = @(Get-ChildItem $p -Directory -ErrorAction SilentlyContinue | Where-Object { Test-Path (Join-Path $_.FullName 'overlay.yaml') })
+  if ($cand.Count -eq 1) { return @{ root=$cand[0].FullName; source='同级 overlay.yaml' } }
+  if ($cand.Count -eq 0) { return @{ root=$null; source='没找到 overlay' } }
+  return @{ root=$null; source='歧义'; candidates=@($cand | ForEach-Object { $_.FullName }) }
+}
+
+$ov = Resolve-OverlayRoot $KERNEL_ROOT
+if (-not $ov.root) {
+  Write-Output ("Overlay = UNKNOWN({0})" -f $ov.source)
+  if ($ov.candidates) {
+    Write-Output "  同级有多个 overlay.yaml,**不许挑一个**:"
+    $ov.candidates | ForEach-Object { Write-Output ("    " + $_) }
+  }
+  Write-Output "  显式指定后再来:setx GOV_OVERLAY `"<你的私有实例根>`"(新开终端生效)"
+  Write-Output "  或在私有实例根下放一个 overlay.yaml 标记(空文件即可)。"
+  exit 1
+}
+$REPO    = $ov.root
+$PARENT  = Split-Path $REPO -Parent
+$MANIFEST = Join-Path $REPO 'harness\manifest.yaml'
+Write-Output ("== 根 ==")
+Write-Output ("  Kernel  : {0}" -f $KERNEL_ROOT)
+Write-Output ("  Overlay : {0}  (解析来源:{1})" -f $REPO, $ov.source)
+Write-Output ""
+
+if (-not (Test-Path $MANIFEST)) { Write-Output "Overlay 里没有 harness\manifest.yaml —— 它是安装清单与变量定义的唯一事实源。先从 Kernel 的 harness\manifest.template.yaml 拷一份来填。"; exit 1 }
 $manText = [IO.File]::ReadAllText($MANIFEST, [Text.Encoding]::UTF8)
 
 # ---------- 1. 从 manifest 读变量定义(不在脚本里写死) ----------

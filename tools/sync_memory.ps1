@@ -1,4 +1,4 @@
-# Transport the personal governance memory between THIS machine's Claude Code
+﻿# Transport the personal governance memory between THIS machine's Claude Code
 # auto-memory and the private repo, so it can move across machines by git.
 #
 #   tools\sync_memory.ps1 -Push   # snapshot this machine's live memory INTO repo\memory, then commit + push

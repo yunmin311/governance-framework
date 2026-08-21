@@ -1,4 +1,4 @@
-# project_attach_inbox.ps1 — 给一个项目挂上极轻的 .governance/INBOX.md(§15)
+﻿# project_attach_inbox.ps1 — 给一个项目挂上极轻的 .governance/INBOX.md(§15)
 #
 #   tools\project_attach_inbox.ps1 -Path D:\some-project            # 挂上(已存在则跳过)
 #   tools\project_attach_inbox.ps1 -Path D:\some-project -WhatIf    # 只看会做什么,不写
