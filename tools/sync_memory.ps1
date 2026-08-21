@@ -13,11 +13,53 @@
 param(
   [switch]$Push,
   [switch]$Pull,
-  [string]$ProjectHash = 'D--'
+  [string]$ProjectHash
 )
 $ErrorActionPreference = 'Stop'
-$repoRoot = Split-Path -Parent $PSScriptRoot
+
+# 与 render_harness.ps1 / doctor.ps1 同一套根解析:
+#   KERNEL_ROOT  = 本脚本所在的框架根       OVERLAY_ROOT = 私有实例根(memory 永远在这儿)
+# 工具可以住在 Kernel 里,不需要被复制进 Overlay。
+$KERNEL_ROOT = Split-Path -Parent $PSScriptRoot
+function Resolve-OverlayRoot($kernelRoot) {
+  if ($env:GOV_OVERLAY) {
+    if (Test-Path $env:GOV_OVERLAY) { return @{ root=(Resolve-Path $env:GOV_OVERLAY).Path; source='GOV_OVERLAY' } }
+    return @{ root=$null; source='GOV_OVERLAY 指向的路径不存在' }
+  }
+  if (Test-Path (Join-Path $kernelRoot 'overlay.yaml')) { return @{ root=$kernelRoot; source='self(本仓自身就是 overlay)' } }
+  $p = Split-Path $kernelRoot -Parent
+  $cand = @(Get-ChildItem $p -Directory -ErrorAction SilentlyContinue | Where-Object { Test-Path (Join-Path $_.FullName 'overlay.yaml') })
+  if ($cand.Count -eq 1) { return @{ root=$cand[0].FullName; source='同级 overlay.yaml' } }
+  if ($cand.Count -eq 0) { return @{ root=$null; source='没找到 overlay' } }
+  return @{ root=$null; source='歧义'; candidates=@($cand | ForEach-Object { $_.FullName }) }
+}
+$ov = Resolve-OverlayRoot $KERNEL_ROOT
+if (-not $ov.root) {
+  if ($ov.candidates) { Write-Output "Overlay 歧义,**不许挑一个**:"; $ov.candidates | ForEach-Object { Write-Output ("  " + $_) } }
+  throw "Overlay = UNKNOWN($($ov.source))。设 GOV_OVERLAY 指向私有实例根,或在它根下放一个 overlay.yaml 标记。"
+}
+$repoRoot = $ov.root
 $repoMem  = Join-Path $repoRoot 'memory'
+
+# 主库根名:**精确匹配,不猜**。用 memory\MEMORY.md 的内容比对,恰好一个候选才算数。
+# (旧版默认 'D--',换机后会安静地对着一个不存在的目录同步,什么都不报。)
+if (-not $ProjectHash) {
+  $repoIndex = Join-Path $repoMem 'MEMORY.md'
+  $projRoot  = Join-Path $env:USERPROFILE '.claude\projects'
+  $hits = @()
+  if ((Test-Path $repoIndex) -and (Test-Path $projRoot)) {
+    $want = (Get-FileHash $repoIndex -Algorithm MD5).Hash
+    foreach ($d in (Get-ChildItem $projRoot -Directory -ErrorAction SilentlyContinue)) {
+      $mi = Join-Path $d.FullName 'memory\MEMORY.md'
+      if ((Test-Path $mi) -and ((Get-FileHash $mi -Algorithm MD5).Hash -eq $want)) { $hits += $d.Name }
+    }
+  }
+  if ($hits.Count -eq 1) { $ProjectHash = $hits[0] }
+  else {
+    $why = if ($hits.Count -gt 1) { "有 $($hits.Count) 个候选都匹配:$($hits -join ', ')" } else { "内容匹配不到任何候选" }
+    throw "主库根名 = UNKNOWN($why)。**不猜**,请显式指定:-ProjectHash '<根名>'(形如 D--,即工作目录 D:\ 对应的目录名)。新机首次 -Pull 时本机还没有记忆可比,本来就该显式给。"
+  }
+}
 $liveMem  = Join-Path $env:USERPROFILE ".claude\projects\$ProjectHash\memory"
 
 function Assert-Robocopy { if ($LASTEXITCODE -ge 8) { throw "robocopy failed (exit $LASTEXITCODE)" } }

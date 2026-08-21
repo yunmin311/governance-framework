@@ -296,11 +296,15 @@ if ($machMem -and (Test-Path $repoMem) -and (Test-Path $machMem)) {
 } elseif ($machMem) { Add-Row 'D 记忆' "主库($ProjectHash)" 'MISSING' "找不到 $repoMem 或 $machMem" 'tools\sync_memory.ps1 -Push' }
 
 # ---------- E Git 卫生 ----------
-$repos = Get-ChildItem $PARENT -Directory -ErrorAction SilentlyContinue | Where-Object { Test-Path (Join-Path $_.FullName '.git') }
+# 项目仓是 **Overlay 的兄弟**(私有实例仓和各项目并排放),不是 Kernel 的兄弟。
+# 工具装在公开 Kernel 里时,Kernel 的同级可能一个项目都没有 —— 用错根会扫出空集然后一片"OK"。
+$SCAN_PARENT = if ($OVERLAY) { Split-Path $OVERLAY -Parent } else { $PARENT }
+$repos = Get-ChildItem $SCAN_PARENT -Directory -ErrorAction SilentlyContinue | Where-Object { Test-Path (Join-Path $_.FullName '.git') }
 
 # 身份判据要通用:不点名任何具体域名(那等于把作者的雇主写进工具)。
 # 做法是取**这批个人仓里最常见的那个邮箱**当基准,偏离基准的报出来让人确认。
 # 这样既能抓到"个人仓误用了公司/学校邮箱",也能抓到"内网仓误用了个人邮箱",而且换个人用一样成立。
+Add-Row 'E Git' '扫描根' 'OK' ("{0}  ({1} 个 git 仓)" -f $SCAN_PARENT, @($repos).Count) ''
 $personalEmails = @()
 foreach ($r in $repos) {
   $u = (git -C $r.FullName remote get-url origin 2>$null)
@@ -335,7 +339,7 @@ foreach ($r in $repos) {
 # 换个人用就是错的(2026-08-19:原先写死 <your-github-user>,构建的泄漏闸因此拦下整个脚本,闸拦得对)。
 $gh = Get-Command gh -ErrorAction SilentlyContinue
 if ($gh) {
-  # 要查的仓 = Overlay 根与 Kernel 根(两者可能是同一个,去重后逐个查)
+    # 要查的仓 = Overlay 根与 Kernel 根(两者可能是同一个,去重后逐个查)
   $targets = @()
   $repoCandidates = @($OVERLAY, $KERNEL_ROOT) | Where-Object { $_ } | Select-Object -Unique
   foreach ($r in $repoCandidates) {
@@ -359,16 +363,20 @@ if ($gh) {
 
 # ---------- G 深检 ----------
 if ($Deep) {
-  Push-Location $REPO
+  # 校验器与单元测试属于 **Kernel**,从 KERNEL_ROOT 跑;Overlay 里可能根本没有 tools\。
+  Push-Location $KERNEL_ROOT
+  Add-Row 'G 校验' '运行根' 'OK' $KERNEL_ROOT ''
   foreach ($v in @('validate_runtime.py','validate_paths.py','validate_release.py')) {
-    $out = (python -X utf8 (Join-Path $REPO "tools\$v") 2>&1 | Out-String)
+    $vp = Join-Path $KERNEL_ROOT "tools\$v"
+    if (-not (Test-Path $vp)) { Add-Row 'G 校验' $v 'SKIP' "Kernel 里没有 tools\$v" ''; continue }
+    $out = (python -X utf8 $vp 2>&1 | Out-String)
     if ($LASTEXITCODE -eq 0) { Add-Row 'G 校验' $v 'OK' '通过' '' }
     else { Add-Row 'G 校验' $v 'WARN' (($out -split "`n" | Where-Object { $_ -match 'FAIL' }) -join '; ') '先修校验再推' }
   }
   # 单元测试必须从仓根用 `python -m tools.<name>` 跑。
   # 用 `python tools\test_x.py` 会把 tools\ 而不是仓根放进 sys.path → ModuleNotFoundError: No module named 'tools',
   # 看起来像测试挂了、其实是调用方式错(2026-08-19 踩到,固化在此免得再判错)。
-  foreach ($t in (Get-ChildItem (Join-Path $REPO 'tools') -Filter 'test_*.py')) {
+  foreach ($t in (Get-ChildItem (Join-Path $KERNEL_ROOT 'tools') -Filter 'test_*.py' -ErrorAction SilentlyContinue)) {
     $mod = 'tools.' + [IO.Path]::GetFileNameWithoutExtension($t.Name)
     $out = (python -X utf8 -m $mod 2>&1 | Out-String)
     if ($LASTEXITCODE -eq 0) { Add-Row 'G 校验' $t.Name 'OK' '通过' '' }
